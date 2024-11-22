@@ -5,8 +5,7 @@ export const Location = ({ className }: { className?: string }) => (
     height="14"
     viewBox="0 0 14 14"
     fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+    xmlns="http://www.w3.org/2000/svg">
     <path
       d="M10.7277 5.82784C10.7277 8.24867 8.36521 11.1595 7.40271 12.2445C7.18687 12.4837 6.81354 12.4837 6.59771 12.2445C5.63521 11.1595 3.27271 8.24867 3.27271 5.82784C3.27271 3.76868 4.94104 2.10034 7.00021 2.10034C9.05937 2.10034 10.7277 3.76868 10.7277 5.82784Z"
       stroke="#252525"
@@ -33,8 +32,7 @@ export const Light = ({ className }: { className?: string }) => (
     height="24"
     viewBox="0 0 24 24"
     fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+    xmlns="http://www.w3.org/2000/svg">
     <g filter="url(#filter0_iii_53_160)">
       <g clipPath="url(#clip0_53_160)">
         <rect width="24" height="24" rx="12" fill="#353535" />
@@ -114,8 +112,7 @@ export const Light = ({ className }: { className?: string }) => (
         width="26"
         height="27"
         filterUnits="userSpaceOnUse"
-        colorInterpolationFilters="sRGB"
-      >
+        colorInterpolationFilters="sRGB">
         <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feBlend
           mode="normal"
@@ -185,8 +182,7 @@ export const Light = ({ className }: { className?: string }) => (
         width="27.2002"
         height="22.4698"
         filterUnits="userSpaceOnUse"
-        colorInterpolationFilters="sRGB"
-      >
+        colorInterpolationFilters="sRGB">
         <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feColorMatrix
           in="SourceAlpha"
@@ -231,8 +227,7 @@ export const Flag = ({ className }: { className?: string }) => (
     height="24"
     viewBox="0 0 24 24"
     fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+    xmlns="http://www.w3.org/2000/svg">
     <g clipPath="url(#clip0_53_183)">
       <path
         d="M24 18C24 18.7073 23.719 19.3856 23.219 19.8857C22.7189 20.3858 22.0406 20.6667 21.3333 20.6667H2.66667C1.95942 20.6667 1.28115 20.3858 0.781049 19.8857C0.280952 19.3856 0 18.7073 0 18V6.00004C0 5.2928 0.280952 4.61452 0.781049 4.11442C1.28115 3.61433 1.95942 3.33337 2.66667 3.33337H21.3333C22.0406 3.33337 22.7189 3.61433 23.219 4.11442C23.719 4.61452 24 5.2928 24 6.00004V18Z"
@@ -294,8 +289,7 @@ export const Vector = ({ className }: { className?: string }) => (
     height="6"
     viewBox="0 0 10 6"
     fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+    xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -312,8 +306,7 @@ export const Logo = ({ className }: { className?: string }) => (
     height="600"
     viewBox="0 0 600 600"
     fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+    xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -334,8 +327,7 @@ export const Logo = ({ className }: { className?: string }) => (
         y1="300"
         x2="550"
         y2="300"
-        gradientUnits="userSpaceOnUse"
-      >
+        gradientUnits="userSpaceOnUse">
         <stop stopColor="#1AA683" />
         <stop offset="1" stopColor="#1AA715" />
       </linearGradient>
@@ -345,8 +337,7 @@ export const Logo = ({ className }: { className?: string }) => (
         y1="300"
         x2="600"
         y2="300"
-        gradientUnits="userSpaceOnUse"
-      >
+        gradientUnits="userSpaceOnUse">
         <stop stopColor="#1AA683" />
         <stop offset="1" stopColor="#1AA620" />
       </linearGradient>
@@ -361,8 +352,7 @@ export const GoogleIcon = ({ className }: { className?: string }) => (
     height="18"
     viewBox="0 0 18 18"
     fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+    xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -390,29 +380,34 @@ export const GoogleIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-export const eyeOff = ({ className }: { className?: string }) => (
+export const eyeOff = ({
+  className,
+  color,
+}: {
+  className?: string;
+  color?: string;
+}) => (
   <svg
     className={className}
     width="20"
     height="20"
     viewBox="0 0 20 20"
     fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+    xmlns="http://www.w3.org/2000/svg">
     <g clipPath="url(#clip0_190_22694)">
       <path
         d="M14.9502 14.95C13.5257 16.0358 11.7911 16.6374 10.0002 16.6667C4.16683 16.6667 0.833496 10 0.833496 10C1.87007 8.06825 3.30778 6.38051 5.05016 5.05M8.25016 3.53333C8.82377 3.39907 9.41105 3.33195 10.0002 3.33333C15.8335 3.33333 19.1668 10 19.1668 10C18.661 10.9463 18.0577 11.8373 17.3668 12.6583M11.7668 11.7667C11.538 12.0123 11.262 12.2093 10.9553 12.3459C10.6486 12.4826 10.3176 12.556 9.98191 12.562C9.64623 12.5679 9.3128 12.5061 9.0015 12.3804C8.69021 12.2547 8.40743 12.0675 8.17004 11.8301C7.93264 11.5927 7.74549 11.31 7.61975 10.9987C7.49402 10.6874 7.43227 10.3539 7.43819 10.0183C7.44411 9.68258 7.51759 9.35154 7.65423 9.04487C7.79087 8.73821 7.98787 8.46221 8.2335 8.23333"
-        stroke="#252525"
+        stroke={color}
         strokeWidth="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M0.833496 0.833344L19.1668 19.1667"
-        stroke="#252525"
+        stroke={color}
         strokeWidth="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </g>
     <defs>
@@ -423,29 +418,34 @@ export const eyeOff = ({ className }: { className?: string }) => (
   </svg>
 );
 
-export const eyeOn = ({ className }: { className?: string }) => (
+export const eyeOn = ({
+  className,
+  color,
+}: {
+  className?: string;
+  color?: string;
+}) => (
   <svg
     className={className}
     width="20"
     height="20"
     viewBox="0 0 20 20"
     fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+    xmlns="http://www.w3.org/2000/svg">
     <g clipPath="url(#clip0_190_22693)">
       <path
         d="M0.833496 10C0.833496 10 4.16683 3.33334 10.0002 3.33334C15.8335 3.33334 19.1668 10 19.1668 10C19.1668 10 15.8335 16.6667 10.0002 16.6667C4.16683 16.6667 0.833496 10 0.833496 10Z"
-        stroke="#252525"
+        stroke={color}
         strokeWidth="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M10 12.5C11.3807 12.5 12.5 11.3807 12.5 10C12.5 8.61929 11.3807 7.5 10 7.5C8.61929 7.5 7.5 8.61929 7.5 10C7.5 11.3807 8.61929 12.5 10 12.5Z"
-        stroke="#252525"
+        stroke={color}
         strokeWidth="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </g>
     <defs>
@@ -463,8 +463,7 @@ export const TelegramIcon = ({ className }: { className?: string }) => (
     height="28"
     viewBox="0 0 28 28"
     fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+    xmlns="http://www.w3.org/2000/svg">
     <rect width="28" height="28" rx="5" fill="#252525" />
     <path
       d="M19.6 8.82158L17.4963 19.8046C17.4963 19.8046 17.2019 20.5661 16.3933 20.2009L11.5393 16.3468L11.5167 16.3355C12.1724 15.7258 17.2567 10.9919 17.4789 10.7773C17.8229 10.445 17.6094 10.2471 17.21 10.4982L9.6998 15.4371L6.8024 14.4276C6.8024 14.4276 6.34643 14.2596 6.30256 13.8944C6.25812 13.5286 6.8174 13.3308 6.8174 13.3308L18.6292 8.53229C18.6292 8.53229 19.6 8.09058 19.6 8.82158Z"
@@ -480,8 +479,7 @@ export const InstagramIcon = ({ className }: { className?: string }) => (
     height="28"
     viewBox="0 0 28 28"
     fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+    xmlns="http://www.w3.org/2000/svg">
     <rect width="28" height="28" rx="5" fill="#252525" />
     <path
       d="M14 8.26506C15.8554 8.26506 16.1084 8.26506 16.8675 8.26506C17.5422 8.26506 17.8795 8.43374 18.1325 8.51807C18.4699 8.68675 18.7229 8.77109 18.9759 9.0241C19.2289 9.27711 19.3976 9.53012 19.4819 9.86747C19.5663 10.1205 19.6506 10.4578 19.7349 11.1325C19.7349 11.8916 19.7349 12.0602 19.7349 14C19.7349 15.9398 19.7349 16.1084 19.7349 16.8675C19.7349 17.5422 19.5663 17.8795 19.4819 18.1325C19.3133 18.4699 19.2289 18.7229 18.9759 18.9759C18.7229 19.2289 18.4699 19.3976 18.1325 19.4819C17.8795 19.5663 17.5422 19.6506 16.8675 19.7349C16.1084 19.7349 15.9398 19.7349 14 19.7349C12.0602 19.7349 11.8916 19.7349 11.1325 19.7349C10.4578 19.7349 10.1205 19.5663 9.86747 19.4819C9.53012 19.3133 9.27711 19.2289 9.0241 18.9759C8.77109 18.7229 8.60241 18.4699 8.51807 18.1325C8.43374 17.8795 8.3494 17.5422 8.26506 16.8675C8.26506 16.1084 8.26506 15.9398 8.26506 14C8.26506 12.0602 8.26506 11.8916 8.26506 11.1325C8.26506 10.4578 8.43374 10.1205 8.51807 9.86747C8.68675 9.53012 8.77109 9.27711 9.0241 9.0241C9.27711 8.77109 9.53012 8.60241 9.86747 8.51807C10.1205 8.43374 10.4578 8.3494 11.1325 8.26506C11.8916 8.26506 12.1446 8.26506 14 8.26506ZM14 7C12.0602 7 11.8916 7 11.1325 7C10.3735 7 9.86747 7.16868 9.44578 7.33735C9.0241 7.50602 8.60241 7.75904 8.18072 8.18072C7.75904 8.60241 7.59036 8.93976 7.33735 9.44578C7.16868 9.86747 7.08434 10.3735 7 11.1325C7 11.8916 7 12.1446 7 14C7 15.9398 7 16.1084 7 16.8675C7 17.6265 7.16868 18.1325 7.33735 18.5542C7.50602 18.9759 7.75904 19.3976 8.18072 19.8193C8.60241 20.241 8.93976 20.4096 9.44578 20.6627C9.86747 20.8313 10.3735 20.9157 11.1325 21C11.8916 21 12.1446 21 14 21C15.8554 21 16.1084 21 16.8675 21C17.6265 21 18.1325 20.8313 18.5542 20.6627C18.9759 20.494 19.3976 20.241 19.8193 19.8193C20.241 19.3976 20.4096 19.0602 20.6627 18.5542C20.8313 18.1325 20.9157 17.6265 21 16.8675C21 16.1084 21 15.8554 21 14C21 12.1446 21 11.8916 21 11.1325C21 10.3735 20.8313 9.86747 20.6627 9.44578C20.494 9.0241 20.241 8.60241 19.8193 8.18072C19.3976 7.75904 19.0602 7.59036 18.5542 7.33735C18.1325 7.16868 17.6265 7.08434 16.8675 7C16.1084 7 15.9398 7 14 7Z"
@@ -505,21 +503,40 @@ export const ArrowRight = ({ className }: { className?: string }) => (
     height="20"
     viewBox="0 0 20 20"
     fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+    xmlns="http://www.w3.org/2000/svg">
     <path
       d="M4.16663 10H15.8333"
       stroke="white"
       strokeWidth="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M10 4.16663L15.8333 9.99996L10 15.8333"
       stroke="white"
       strokeWidth="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+export const check = ({ className }: { className?: string }) => (
+  <svg
+    className={className}
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg">
+    <rect x="0.5" y="0.5" width="23" height="23" rx="3.5" fill="#1AA683" />
+    <rect x="0.5" y="0.5" width="23" height="23" rx="3.5" stroke="white" />
+    <path
+      d="M18 7.5L9.75 15.75L6 12"
+      stroke="white"
+      stroke-width="1.6666"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );
