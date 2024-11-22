@@ -17,7 +17,7 @@ const LoginPage = () => {
     <div className="flex items-center justify-center min-h-screen">
       <div className="border-[#D6D6D6] border rounded-lg p-8 px-[110px] py-[120px]">
         <div className="w-[450px] flex flex-col items-center">
-          <h1 className="text-[32px] font-bold leading-[40px] text-center">
+          <h1 className="font-circular text-[32px] font-bold leading-[40px] text-center">
             Войдите в аккаунт Shanyraq!
           </h1>
           <form onSubmit={handleSubmit} className="w-full">
