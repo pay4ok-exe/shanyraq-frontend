@@ -96,7 +96,7 @@ const LoginPage = () => {
                   onClick={() => {
                     setIsRemember(!IsRemember);
                   }}>
-                  {IsRemember && <Image.check className="" />}
+                  {IsRemember && <Image.check />}
                 </button>
                 Запомнить меня
               </label>
