@@ -177,7 +177,7 @@ const RegisterPage = () => {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full font-circular font-bold text-[20px] bg-[#1AA683] text-white py-[16px] rounded-lg hover:bg-[#1aa683df] focus:outline-none transition">
+                className="w-full font-circular font-bold text-[20px] bg-[#1AA683] text-white py-[10px] rounded-lg hover:bg-[#1aa683df] focus:outline-none transition">
                 Зарегистрироваться
               </button>
             </form>
@@ -188,7 +188,7 @@ const RegisterPage = () => {
               </span>
               <hr className="border-gray-300 flex-grow" />
             </div>
-            <button className="w-full flex items-center justify-center text-[20px] gap-2 border py-[17px] rounded-lg hover:bg-gray-100 transition">
+            <button className="w-full flex items-center justify-center text-[20px] gap-2 border py-[10px] rounded-lg hover:bg-gray-100 transition">
               Войдите с помощью <span className="font-bold">Google</span>
               <Image.GoogleIcon className="w-[20px] h-[20px]" />
             </button>
