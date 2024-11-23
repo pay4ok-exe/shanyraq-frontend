@@ -16,7 +16,7 @@ const Header = () => {
   ];
 
   const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen); // Toggle dropdown visibility
+    setIsDropdownOpen(!isDropdownOpen);
   };
 
   return (
@@ -28,7 +28,7 @@ const Header = () => {
             <a className="underline underline-offset-2 pr-2">Астана</a>
             <a className="underline underline-offset-2">Объявления</a>
           </div>
-          <div className="flex items-center space-x-5">
+          <div className="relative flex items-center space-x-5">
             <Images.Light className="w-[24px] h-[24px]" />
             <div
               className="flex items-center space-x-2"
@@ -40,7 +40,7 @@ const Header = () => {
 
             {/* Dropdown Menu */}
             {isDropdownOpen && (
-              <div className="absolute right-24 top-14 w-[120px] bg-white border border-gray-200 rounded-md shadow-lg z-10">
+              <div className="absolute right-0 top-7 w-[120px] bg-white border border-gray-200 rounded-md shadow-lg z-10">
                 <ul className="py-2 flex flex-col gap-1">
                   {languages.map((i) => (
                     <li
@@ -78,19 +78,6 @@ const Header = () => {
             </button>
           </div>
         </section>
-        {/* <section>
-          <div>
-            <img src="logo.jpg" alt="logo icon" />
-            <h1>Şañyraq</h1>
-          </div>
-          <div>
-            <button>Войти</button>
-            <button>
-              Подать объявление
-              <img src="arrow-right.png" alt="arrow right icon" />
-            </button>
-          </div>
-        </section> */}
       </div>
     </header>
   );
