@@ -76,6 +76,7 @@ const Header = () => {
             </button>
           </div>
         </section>
+        <hr />
       </div>
     </header>
   );
