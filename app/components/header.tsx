@@ -32,8 +32,7 @@ const Header = () => {
             <Images.Light className="w-[24px] h-[24px]" />
             <div
               className="flex items-center space-x-2"
-              onClick={toggleDropdown}
-            >
+              onClick={toggleDropdown}>
               {languages.find((lang) => lang.name === selectedLanguage)?.icon}
               <Images.Vector className="w-[16px] h-[16px]" />
             </div>
@@ -53,8 +52,7 @@ const Header = () => {
                         selectedLanguage === i.name
                           ? "bg-[#1aa68383] text-white"
                           : ""
-                      }`}
-                    >
+                      }`}>
                       {i.icon}
                       {i.name}
                     </li>
