@@ -73,40 +73,12 @@ const Header = () => {
 
   return (
     <header className="min-w-full">
-      <div className="w-[1440px] mx-auto mt-6 space-y-3">
+      <div className="max-w-[1300px] mx-auto mt-6 space-y-3">
         <section className="flex flex-row justify-between">
-          <div className="relative flex items-center space-x-2">
-            <Images.Location className="w-[17px] h-[17px]" />
-            {/* <a className="underline underline-offset-2 pr-2">Астана</a> */}
-            <a
-              onClick={toggleCityDropdown}
-              className="underline underline-offset-2 pr-2 cursor-pointer"
-            >
-              {selectedCity}
-            </a>
-
-            {isCityDropdownOpen && (
-              <div className="absolute top-6 left-3 w-[150px] bg-white border border-gray-200 rounded-md shadow-lg z-10">
-                <ul className="py-2 flex flex-col gap-1">
-                  {cities.map((city) => (
-                    <li
-                      key={city.id}
-                      onClick={() => {
-                        setSelectedCity(city.name);
-                        setIsCityDropdownOpen(false);
-                      }}
-                      className={`flex items-center justify-around rounded py-1 mx-2 cursor-pointer ${
-                        selectedCity === city.name
-                          ? "bg-[#1aa68383] text-white"
-                          : ""
-                      }`}
-                    >
-                      {city.name}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+          <div className="flex items-center space-x-2">
+            <Images.arrowDown />
+            <a className="underline underline-offset-2 pr-2">Астана</a>
+            <a className="underline underline-offset-2">Объявления</a>
           </div>
 
           {/* Dark Mode Toggle and Language Dropdown */}
@@ -141,7 +113,7 @@ const Header = () => {
               onClick={toggleDropdown}
             >
               {languages.find((lang) => lang.name === selectedLanguage)?.icon}
-              <Images.Vector className="w-[16px] h-[16px]" />
+              <Images.arrowDown />
             </div>
 
             {isDropdownOpen && (
@@ -300,7 +272,7 @@ const Header = () => {
             )}
             <button className="flex justify-center items-center space-x-2 bg-[#1aa683] text-white font-bold px-[25px] h-[50px] rounded">
               <span>Подать объявление</span>
-              <Images.ArrowRight className="w-[20px] h-[20px]" />
+              <Images.ArrowRight />
             </button>
             {!isLogin && (
               <button className="flex items-center space-x-2 px-[9px] h-[50px] rounded border border-[#1aa683]">
@@ -309,6 +281,7 @@ const Header = () => {
             )}
           </div>
         </section>
+        <hr />
       </div>
     </header>
   );
