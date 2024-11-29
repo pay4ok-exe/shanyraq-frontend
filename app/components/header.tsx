@@ -21,10 +21,10 @@ const Header = () => {
 
   return (
     <header className="min-w-full">
-      <div className="w-[1440px] mx-auto mt-6 space-y-3">
+      <div className="max-w-[1300px] mx-auto mt-6 space-y-3">
         <section className="flex flex-row justify-between">
           <div className="flex items-center space-x-2">
-            <Images.Location className="w-[17px] h-[17px]" />
+            <Images.arrowDown />
             <a className="underline underline-offset-2 pr-2">Астана</a>
             <a className="underline underline-offset-2">Объявления</a>
           </div>
@@ -34,7 +34,7 @@ const Header = () => {
               className="flex items-center space-x-2"
               onClick={toggleDropdown}>
               {languages.find((lang) => lang.name === selectedLanguage)?.icon}
-              <Images.Vector className="w-[16px] h-[16px]" />
+              <Images.arrowDown />
             </div>
 
             {/* Dropdown Menu */}
@@ -72,7 +72,7 @@ const Header = () => {
           <div className="flex flex-row justify-between">
             <button className="flex justify-center items-center space-x-2 bg-[#1aa683] text-white font-bold w-[246px] h-[50px] rounded">
               <span>Подать объявление</span>
-              <Images.ArrowRight className="w-[20px] h-[20px]" />
+              <Images.ArrowRight />
             </button>
           </div>
         </section>
