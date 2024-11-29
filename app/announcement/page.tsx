@@ -47,7 +47,7 @@ const AnnouncementPage = () => {
 
       {/* Main Content */}
       <div className="flex-grow flex justify-center my-[30px]">
-        <div className="w-full max-w-[1440px]">
+        <div className="w-full max-w-[1300px]">
           {/* Top Section with Images */}
           <div className="grid grid-cols-4 gap-4">
             {/* Main Image (Left: 2/3 of the width) */}
