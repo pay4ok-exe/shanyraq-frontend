@@ -45,7 +45,7 @@ const Card: React.FC<CardProps> = ({
                             alt="Chevron"
                             width={20}
                             height={20}
-                            className="w-full h-full object-contain"
+                            className="object-contain"
                         />
                     </button>
                 </div>
@@ -57,7 +57,7 @@ const Card: React.FC<CardProps> = ({
                             alt="Chevron"
                             width={20}
                             height={20}
-                            className="w-full h-full object-contain"
+                            className="object-contain"
                         />
                     </button>
                 </div>
@@ -84,8 +84,8 @@ const Card: React.FC<CardProps> = ({
                     <Image
                         src={'/location.svg'}
                         alt="Location"
-                        width={16}
-                        height={16}
+                        width={12}
+                        height={12}
                         className="opacity-50"
                     />
                     <span>{coords}</span>
