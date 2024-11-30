@@ -89,29 +89,25 @@ const Header = () => {
               onClick={toggleTheme}
               className={`relative w-[56px] h-[26px] flex items-center rounded-[5px] transition-colors outline-none  ${
                 isDarkMode ? "bg-[#252525]" : "border border-gray-200"
-              }`}
-            >
+              }`}>
               {/* Light Icon */}
               <div
                 className={`absolute right-2 transition-opacity duration-300 ${
                   isDarkMode ? "opacity-0" : "opacity-100"
-                }`}
-              >
+                }`}>
                 <Images.LightModeIcon className="w-5 h-5 " />
               </div>
               {/* Dark Icon */}
               <div
                 className={`absolute left-2 transition-opacity duration-300 ${
                   isDarkMode ? "opacity-100" : "opacity-0"
-                }`}
-              >
+                }`}>
                 <Images.DarkModeIcon className="w-5 h-5 text-white" />
               </div>
             </button>
             <div
               className="flex items-center space-x-2"
-              onClick={toggleDropdown}
-            >
+              onClick={toggleDropdown}>
               {languages.find((lang) => lang.name === selectedLanguage)?.icon}
               <Images.arrowDown />
             </div>
@@ -130,8 +126,7 @@ const Header = () => {
                         selectedLanguage === i.name
                           ? "bg-[#1aa68383] text-white"
                           : ""
-                      }`}
-                    >
+                      }`}>
                       {i.icon}
                       {i.name}
                     </li>
@@ -156,8 +151,7 @@ const Header = () => {
                 </div>
                 <div
                   onClick={togglePriceDropdown}
-                  className="font-circular w-1/2 text-center border-r-2 text-[#252525] font-medium text-[16px] leading-5"
-                >
+                  className="font-circular w-1/2 text-center border-r-2 text-[#252525] font-medium text-[16px] leading-5">
                   {minPrice} - {maxPrice}
                 </div>
 
@@ -231,8 +225,7 @@ const Header = () => {
 
                 <div
                   onClick={toggleRoomDropdown}
-                  className="font-circular flex w-1/3 pl-4 text-[#252525] font-medium text-[16px] leading-5 cursor-pointer select-none"
-                >
+                  className="font-circular flex w-1/3 pl-4 text-[#252525] font-medium text-[16px] leading-5 cursor-pointer select-none">
                   {selectedRoom} жителей
                 </div>
 
@@ -249,8 +242,7 @@ const Header = () => {
                             setSelectedRoom(room.name);
                             setIsRoomDropdownOpen(false);
                           }}
-                          className={`flex items-center justify-center px-[12px] py-[4px] bg-[#D1EDE6] rounded-[5px] cursor-pointer font-normal text-[14px] leading-[17.5px] `}
-                        >
+                          className={`flex items-center justify-center px-[12px] py-[4px] bg-[#D1EDE6] rounded-[5px] cursor-pointer font-normal text-[14px] leading-[17.5px] `}>
                           {room.name}
                         </li>
                       ))}
