@@ -16,13 +16,43 @@ body {
   font-family: "Source Sans Pro", sans-serif;
 }
 
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   display: none;
+} */
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Hide the scrollbar */
+}
+
+.hide-scrollbar {
+  overflow-x: auto; /* Ensure horizontal scrolling is still enabled */
 }
 
 /* For Firefox */
 .scrollbar-hidden {
   scrollbar-width: none;
+}
+
+/* Custom Scrollbar Styling */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 10px; /* Width of the scrollbar */
+  height: 565px; /* Height of the horizontal scrollbar */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #d6d6d6; /* Track color */
+  border-radius: 5px;
+  opacity: 0.75;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #252525; /* Thumb color */
+  border-radius: 5px;
+  opacity: 1;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #1aa683; /* Hover effect on the thumb */
 }
 
 /* Hide the default scrollbar */

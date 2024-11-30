@@ -56,8 +56,8 @@ const AccordionList: React.FC = () => {
   ];
 
   return (
-    <div className="w-full flex justify-between max-h-[670px] overflow-y-auto custom-scrollbar">
-      <div className="max-w-[540px] max-h-full flex flex-col">
+    <div className="w-full flex justify-between max-h-[670px] overflow-y-auto custom-scrollbar mr-[50px]">
+      <div className="max-w-[700px] max-h-full flex flex-col">
         {appAdvantages.map((data, index) => (
           <div key={data.id} className="flex group">
             <div

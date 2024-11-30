@@ -199,7 +199,7 @@ const LandingPage = () => {
 
           <div
             ref={scrollContainerRef}
-            className="w-full overflow-x-auto scrollbar- flex gap-[27px] py-[10px]">
+            className="w-full overflow-x-auto hide-scrollbar flex gap-[27px] py-[10px]">
             {cardData.map((card, index) => (
               <Card
                 key={card.id}
