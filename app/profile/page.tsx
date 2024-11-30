@@ -8,7 +8,7 @@ import MenuItem from "../../components/ui/MenuItem";
 import FormInput from "../../components/ui/FormInput";
 import FormSelect from "../../components/ui/FormSelect";
 
-export default function Dashboard() {
+export default function ProfilesPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [passwordFields, setPasswordFields] = useState({
         oldPassword: "",
@@ -46,9 +46,9 @@ export default function Dashboard() {
             <Header/>
 
             {/* Main Content */}
-            <div className="w-full max-w-[1440px] mx-auto px-4 flex-grow">
+            <div className="w-full max-w-[1440px] mx-auto px-4 flex-grow mt-[35px]">
                 {/* Progress Section */}
-                <div className="w-full my-[35px]">
+                <div className="w-full">
                     <div className="flex items-center space-x-4">
                         <div
                             className="flex items-center justify-center w-8 h-8 bg-green-100 text-green-600 rounded-full">
@@ -69,9 +69,9 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                <div className="flex w-full gap-10">
+                <div className="flex w-full gap-10 mt-[35px]">
                     {/* Sidebar */}
-                    <div className="flex-none bg-white rounded-[10px] border border-gray-300 w-1/3 h-[600px]">
+                    <div className="flex-none bg-white rounded-[10px] border border-gray-300 w-1/4 min-h-full">
                         <div className="relative flex justify-center mt-[30px]">
                             <div className="w-[130px] h-[130px] rounded-full overflow-hidden relative">
                                 <Image src={"/prof.svg"} alt={"Profile Image"} layout="fill" objectFit="cover"/>
@@ -101,7 +101,7 @@ export default function Dashboard() {
                             </MenuItem>
                             <MenuItem
                                 label="Мои объявления"
-                                href="../profile/announcements"
+                                href={"/announcements"}
                                 isActive={activeItem === "announcements"}
                                 onClick={() => setActiveItem("announcements")}
                             >
@@ -118,7 +118,7 @@ export default function Dashboard() {
                     </div>
 
                     {/* Profile Form */}
-                    <div className="flex-auto bg-white rounded-[10px] border border-gray-300 w-full h-[600px] p-8">
+                    <div className="flex-auto bg-white rounded-[10px] border border-gray-300 w-full p-8">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <FormInput label="Имя" defaultValue="Алихан" disabled/>
                             <FormInput label="Фамилия" defaultValue="Оспанов" disabled/>
@@ -135,7 +135,7 @@ export default function Dashboard() {
                                 onChange={handleSelectChange}
                             />
                         </div>
-                        <div className="flex justify-end mt-6 space-x-4">
+                        <div className="flex justify-end space-x-4 mt-52">
                             <button
                                 onClick={() => setIsModalOpen(true)}
                                 className="border border-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-100"
