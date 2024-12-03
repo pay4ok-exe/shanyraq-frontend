@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import * as Images from "../../public/images";
+import * as Images from "../public/images";
 import { useEffect, useState } from "react";
 
 interface CardProps {

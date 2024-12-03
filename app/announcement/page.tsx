@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
-import Header from "../components/header";
-import Footer from "../components/footer";
+import Header from "../../components/header";
+import Footer from "../../components/footer";
 import * as Image from "../../public/images";
 import { url } from "inspector";
 

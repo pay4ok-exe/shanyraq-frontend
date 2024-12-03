@@ -1,9 +1,9 @@
 "use client";
-import * as Images from "../../public/images";
+import * as Images from "../public/images";
 
 import Slider from "@mui/material/Slider";
 import { useState } from "react";
-import AddressDatas from "../login/result.json"; // JSON файлын импорттау
+import AddressDatas from "../app/login/result.json"; // JSON файлын импорттау
 
 const Search = () => {
   const [city, setCity] = useState("");

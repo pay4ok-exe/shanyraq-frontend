@@ -6,12 +6,12 @@ import * as Images from "../../public/images";
 import WelcomeImage from "@/public/welcomeLanding.png";
 import CtaImage from "@/public/cta.png";
 import BenefitImage from "@/public/benefit.png";
-import Header from "../components/header";
-import Footer from "../components/footer";
-import Search from "../components/search";
-import Card from "../components/card";
-import Accordion from "../components/accordion";
-import AccordionList from "../components/accordion-list";
+import Header from "../../components/header";
+import Footer from "../../components/footer";
+import Search from "../../components/search";
+import Card from "../../components/card";
+import Accordion from "../../components/accordion";
+import AccordionList from "../../components/accordion-list";
 
 const LandingPage = () => {
   const [activeDesc, setActiveDesc] = useState(false);
