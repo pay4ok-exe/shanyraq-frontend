@@ -959,7 +959,7 @@ function StepApartmentFullDetails({
   );
   const [floorsFrom, setFloorsFrom] = useState(formData.floorsFrom || 1);
   const [floorsTo, setFloorsTo] = useState(formData.floorsTo || 5);
-  const [roomSize, setRoomSize] = useState(formData.roomSize || 0);
+  const [roomSize, setRoomSize] = useState(formData.roomSize || "");
   const [complex, setComplex] = useState(formData.complex || "");
   const [nearBy, setNearBy] = useState(formData.nearBy || "");
   const [longTerm, setLongTerm] = useState(formData.longTerm || false);
@@ -1093,7 +1093,9 @@ function StepApartmentFullDetails({
         <input
           type="number"
           value={roomSize}
-          onChange={(e) => setRoomSize(parseInt(e.target.value))}
+          onChange={(e) =>
+            setRoomSize(parseInt(e.target.value.trim() ? e.target.value : "0"))
+          }
           className="w-full border-[1px] border-[#EBEBEB] rounded-[5px] px-[15px] py-[10px] text-[16px] text-[#252525] outline-none focus:outline-none focus:border-[#1aa683]"
         />
       </div>
