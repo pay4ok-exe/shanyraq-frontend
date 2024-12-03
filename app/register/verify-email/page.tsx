@@ -12,7 +12,7 @@ const ResetCodePage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    router.push('/forgot-password/confirm-password')
+    router.push("/login");
   };
 
   const processInput = (
@@ -91,6 +91,13 @@ const ResetCodePage = () => {
                 type="button"
                 className="w-full font-circular font-semibold text-[16px] py-[20px] rounded-lg">
                 Отправить код повторно
+              </button>
+
+              <button
+                type="button"
+                className="w-full font-circular font-semibold text-[20px] py-[10px] rounded-lg"
+                onClick={() => router.push("/register")}>
+                Назад
               </button>
             </form>
           </div>
