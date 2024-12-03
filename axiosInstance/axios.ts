@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseURL = "https://239841327159ba0a43789eb1573397f0.serveo.net/api";
+const baseURL = "https://2bd2ef502c659adf62565e6e5ed9c7eb.serveo.net/api";
 const axiosInstance = axios.create({
   baseURL: baseURL, // Base URL
   headers: {

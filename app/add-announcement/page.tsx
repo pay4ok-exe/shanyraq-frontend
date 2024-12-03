@@ -80,8 +80,7 @@ const AddAnnouncementModal = () => {
         intendedForStudents: formData.apartmentDetails.forStudents,
         areBadHabitsAllowed: formData.apartmentDetails.badHabitsAllowed,
         apartmentsInfo: formData.apartmentDetails.description,
-        images: ["df", "df", "df"], // Assuming there are photos
-        // images: formData.apartmentDetails.photos, // Assuming there are photos
+        images: formData.apartmentDetails.photos, // Assuming there are photos
         typeOfHousing: formData.apartmentDetails.propertyType, // Set default
         numberOfFloor: parseInt(formData.apartmentDetails.rooms), // Adjust if necessary
         maxFloorInTheBuilding: formData.apartmentDetails.floorsFrom, // Adjust as per your data
