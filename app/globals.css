@@ -6,12 +6,71 @@
 
 @font-face {
   font-family: "Circular Std";
-  src: url("/fonts/circular-std-medium-500.ttf") format("truetype"); /* Use "truetype" instead of "ttf" */
-  font-weight: 500; /* Specify the weight */
-  font-style: normal; /* Specify the style */
+  src: url("/fonts/circular-std-medium-500.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
 }
 
-/* Global font application */
+/* Apply global font settings */
 body {
   font-family: "Source Sans Pro", sans-serif;
+}
+
+body.no-scroll {
+  overflow: hidden;
+}
+
+body::-webkit-scrollbar {
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hidden {
+  scrollbar-width: none;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #d6d6d6;
+  border-radius: 5px;
+  opacity: 0.75;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #252525;
+  border-radius: 5px;
+  opacity: 1;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #1aa683;
+}
+
+/* .scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #1aa683 #f1f1f1;
+} */
+
+.scrollbar::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 5px;
+  opacity: 0.75;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  background: #1aa683;
+  border-radius: 5px;
+  opacity: 1;
 }

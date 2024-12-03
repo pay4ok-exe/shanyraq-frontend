@@ -1,10 +1,11 @@
 "use client";
-import * as Images from "../../public/images";
+import * as Images from "../public/images";
 
 const Footer = () => {
   return (
     <footer className="min-w-full flex flex-col justify-between ">
-      <div className="w-[1440px] mx-auto space-y-3 mb-6">
+      <div className="w-[1300px] mx-auto space-y-3 mb-6">
+        <hr />
         <section className="flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <Images.Logo className="w-[50px] h-[50px]" />
