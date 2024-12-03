@@ -1,19 +1,43 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import citiesData from "../app/login/result.json"; // JSON файлын импорттау
-import { json } from "stream/consumers";
-import * as Images from "../public/images";
-import { useModal } from "../app/context/modal-context";
+import AddressDatas from "@/app/result.json";
+import * as Images from "@/public/images";
+import { useModal } from "@/app/context/modal-context";
+import Slider from "@mui/material/Slider";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-const Header = () => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+interface HeaderProps {
+  isFilterResults?: boolean;
+}
 
-  const [selectedLanguage, setSelectedLanguage] = useState("Kazakh");
+const Header: React.FC<HeaderProps> = ({ isFilterResults }) => {
+  const router = useRouter();
+  const [isAuth, setIsAuth] = useState(false);
 
-  const [selectedCity, setSelectedCity] = useState("Астана");
-  const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      setIsAuth(true);
+    } else {
+      setIsAuth(false);
+    }
+  }, []);
+  
+  const [city, setCity] = useState("");
+  const [gender, setGender] = useState("");
+  const [housemates, setHousemates] = useState("");
 
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isPriceDropdownOpen, setIsPriceDropdownOpen] = useState(false);
+  const [isGenderDropdownOpen, setIsGenderDropdownOpen] = useState(false);
+  const [isHousematesDropdownOpen, setIsHousematesDropdownOpen] =
+    useState(false);
+
+  const all_addresses = AddressDatas;
+
+  const [isAddressDropdownOpen, setIsAddressDropdownOpen] = useState(false);
+  const [isDistrictDropdownOpen, setIsDistrictDropdownOpen] = useState(false);
+  const [isMicroDistrictDropdownOpen, setIsMicroDistrictDropdownOpen] =
+    useState(false);
 
   const [address, setAdress] = useState({
     regionOrCityName: "Весь Казахстан",
@@ -21,43 +45,76 @@ const Header = () => {
     microDistrictName: "",
   });
 
-  const [district, setDistrict] = useState({});
-  const [microDistrcit, setMicroDistrcit] = useState({});
+  const [district, setDistrict] = useState({ children: [] });
+  const [microDistrcit, setMicroDistrcit] = useState({
+    children: [],
+  });
 
-  const [isAddressDropdownOpen, setIsAddressDropdownOpen] = useState(false);
-  const [isDistrictDropdownOpen, setIsDistrictDropdownOpen] = useState(false);
-  const [isMicroDistrictDropdownOpen, setIsMicroDistrictDropdownOpen] =
-    useState(false);
+  const [priceRange, setPriceRange] = useState([0, 500000]);
 
-  const all_addresses = citiesData;
+  const handleSliderChange = (event: any, newValue: number | number[]) => {
+    setPriceRange(newValue as number[]);
+  };
 
-  const [selectedAddress, setSelectedAddress] = useState("Астана");
+  const toggleAddressDropdown = () =>
+    setIsAddressDropdownOpen(!isAddressDropdownOpen);
+  const togglePriceDropdown = () =>
+    setIsPriceDropdownOpen(!isPriceDropdownOpen);
+  const toggleGenderDropdown = () =>
+    setIsGenderDropdownOpen(!isGenderDropdownOpen);
+  const toggleHousematesDropdown = () =>
+    setIsHousematesDropdownOpen(!isHousematesDropdownOpen);
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
 
-  const [isPriceDropdownOpen, setIsPriceDropdownOpen] = useState(false);
-  const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(200000);
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log({
+      address: address,
+      price: priceRange,
+      gender,
+      housemates,
+    });
+    // Implement your search logic or API call here
+  };
 
-  const [isRoomDropdownOpen, setIsRoomDropdownOpen] = useState(false);
-  const [selectedRoom, setSelectedRoom] = useState("1");
-
-  const isLogin = true;
-
-  const languages = [
-    { id: 1, name: "Kazakh", icon: <Images.FlagKaz /> },
-    {
-      id: 2,
-      name: "Russian",
-      icon: <Images.FlagRu />,
-    },
+  const genders = [
+    { id: 1, name: "Мужской" },
+    { id: 2, name: "Женский" },
   ];
 
-  const numberRoom = [
+  const housematesCount = [
     { id: 1, name: "1" },
     { id: 2, name: "2" },
     { id: 3, name: "3" },
     { id: 4, name: "4" },
     { id: 5, name: "5+" },
   ];
+
+  const toggleAllDropDown = () => {
+    setIsDropdownOpen(false);
+    setIsCityDropdownOpen(false);
+    setIsAddressDropdownOpen(false);
+    setIsPriceDropdownOpen(false);
+    setIsGenderDropdownOpen(false);
+    setIsHousematesDropdownOpen(false);
+  };
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState("Рус");
+
+  const languages = [
+    { id: 1, name: "Рус" },
+    { id: 2, name: "Қаз" },
+  ];
+
+  const [selectedCity, setSelectedCity] = useState("Астана");
+  const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  const toggleCityDropdown = () => {
+    setIsCityDropdownOpen(!isCityDropdownOpen);
+  };
 
   const cities = [
     { id: 1, name: "Астана" },
@@ -67,38 +124,10 @@ const Header = () => {
     { id: 5, name: "Қарағанды" },
   ];
 
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
-
-  const toggleAddressDropdown = () => {
-    setIsAddressDropdownOpen(!isAddressDropdownOpen);
-    console.log(1);
-  };
-
-  const toggleCityDropdown = () => {
-    setIsCityDropdownOpen(!isCityDropdownOpen);
-  };
-
   const toggleTheme = () => {
     setIsDarkMode((prev) => !prev);
   };
 
-  const togglePriceDropdown = () => setIsPriceDropdownOpen((prev) => !prev);
-
-  const toggleRoomDropdown = () => {
-    setIsRoomDropdownOpen(!isRoomDropdownOpen);
-  };
-
-  const handleMinPriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Math.min(Number(event.target.value), maxPrice - 1000);
-    setMinPrice(value);
-  };
-
-  const handleMaxPriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Math.max(Number(event.target.value), minPrice + 1000);
-    setMaxPrice(value);
-  };
   const { openModal } = useModal();
 
   return (
@@ -109,14 +138,25 @@ const Header = () => {
             <Images.Location />
             {/* <a className="underline underline-offset-2 pr-2">Астана</a> */}
             <a
-              onClick={toggleCityDropdown}
+              onClick={() => {
+                toggleAllDropDown();
+                toggleCityDropdown();
+              }}
               className="underline underline-offset-2 pr-2 cursor-pointer">
-              {selectedCity}
+              <div className="flex items-center">
+                <p className="text-left text-[14px] font-normal leading-[18px] text-[#252525]">
+                  {selectedCity
+                    ? selectedCity.length <= 17
+                      ? selectedCity
+                      : `${selectedCity?.substring(0, 15)}...`
+                    : "Весь Казахстан"}
+                </p>
+              </div>
             </a>
             {isCityDropdownOpen && (
-              <div className="absolute top-6 left-3 w-[130px] bg-white border border-gray-200 rounded-md shadow-lg z-10">
+              <div className="absolute top-6 left-3 w-[160px] h-[200px] bg-white border border-gray-200 rounded-md shadow-lg overflow-y-auto scrollbar">
                 <ul className="py-2 flex flex-col gap-1">
-                  {cities.map((city) => (
+                  {all_addresses.map((city) => (
                     <li
                       key={city.id}
                       onClick={() => {
@@ -160,35 +200,20 @@ const Header = () => {
                 <Images.DarkModeIcon className="w-5 h-5 text-white" />
               </div>
             </button>
-            <div
-              className="flex items-center space-x-2"
-              onClick={toggleDropdown}>
-              {languages.find((lang) => lang.name === selectedLanguage)?.icon}
-              <Images.arrowDown />
+            <div className="flex space-x-2">
+              {languages.map((lang) => (
+                <button
+                  key={lang.id}
+                  onClick={() => setSelectedLanguage(lang.name)}
+                  className={`px-[7px] py-[3px] rounded-[5px] text-[14px] font-normal leading-[18px] border ${
+                    selectedLanguage === lang.name
+                      ? "border-[#1aa68383] text-[#1aa68383]"
+                      : "border-[#B5B7C0] text-[#B5B7C0"
+                  }`}>
+                  {lang.name}
+                </button>
+              ))}
             </div>
-
-            {isDropdownOpen && (
-              <div className="absolute right-0 top-7 w-[120px] bg-white border border-gray-200 rounded-md shadow-lg z-10">
-                <ul className="py-2 flex flex-col gap-1">
-                  {languages.map((i) => (
-                    <li
-                      key={i.id}
-                      onClick={() => {
-                        setSelectedLanguage(i.name);
-                        toggleDropdown();
-                      }}
-                      className={`flex items-center justify-around rounded py-1 mx-2 cursor-pointer ${
-                        selectedLanguage === i.name
-                          ? "bg-[#1aa68383] text-white"
-                          : ""
-                      }`}>
-                      {i.icon}
-                      {i.name}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
           </div>
         </section>
         <section className="flex flex-row justify-between">
@@ -198,18 +223,33 @@ const Header = () => {
               Şañyraq
             </h1>
           </div>
-          {isLogin && (
+          {isFilterResults && (
             <div className="flex items-center space-x-2">
               <div className="relative flex items-center justify-around p-2 h-[60px] bg-white border border-gray-300 rounded-md shadow-md min-w-[700px]">
                 <div
-                  className="cursor-pointer font-circular flex w-3/5 pl-4 items-center border-r-2 text-[#252525] font-medium text-[16px] leading-5"
-                  onClick={toggleAddressDropdown}>
-                  {address.regionOrCityName}
+                  className="cursor-pointer flex w-[150px] pl-4 items-center border-r-2"
+                  onClick={() => {
+                    toggleAllDropDown();
+                    toggleAddressDropdown();
+                  }}>
+                  <div className="flex items-center">
+                    <p className="font-circular text-left text-[14px] font-medium leading-[18px] text-[#252525]">
+                      {city
+                        ? city.length <= 17
+                          ? city
+                          : `${city?.substring(0, 14)}...`
+                        : "Весь Казахстан"}
+                    </p>
+                  </div>
                 </div>
-
                 {isAddressDropdownOpen && (
-                  <div className="flex flex-col p-[16px] justify-between items-end absolute top-[70px] left-0 h-[514px] bg-white border border-gray-200 shadow-lg rounded-[5px]">
-                    <div className="w-full p-[11px] flex items-center border-[1px] border-[#D6D6D6] rounded-[5px] text-[#B5B7C0] text-[14px] font-weight: 400 leading-[17.5px] ">
+                  <div
+                    className="flex flex-col p-[16px] justify-between items-end absolute top-[60px] left-[0] h-[514px] bg-white border border-gray-200 shadow-lg rounded-[5px]"
+                    style={{
+                      boxShadow: "0px 4px 10px 0px rgba(0, 0, 0, 0.2)",
+                    }}
+                    onBlur={() => setIsAddressDropdownOpen(false)}>
+                    <div className="w-full p-[11px] flex items-center border-[1px] border-[#D6D6D6] rounded-[5px] text-[#B5B7C0] text-[14px] leading-[17.5px] ">
                       <input
                         className="w-full border-none outline-none "
                         type="text"
@@ -217,18 +257,19 @@ const Header = () => {
                       />
                       <Images.SearchIconGray />
                     </div>
-                    <div className="w-full flex justify-between">
+                    <div className="w-full flex justify-between text-left text-[14px] gap-[7px]">
                       <div className="w-[214px] h-[380px] border-[1px] border-[#D6D6D6] rounded-[5px] overflow-y-auto scrollbar">
-                        <ul className="flex flex-col  gap-1 max-h-[380px] ">
+                        <ul className="flex flex-col gap-1 max-h-[380px] text-[#252525] ">
                           <li
                             onClick={() => {
                               setAdress((prevState) => ({
                                 ...prevState,
-                                regionOrCityName: "Весь Казахстан", // Ensure the key is correct
+                                regionOrCityName: "Весь Казахстан", // Defalut
                               }));
                               setIsDistrictDropdownOpen(false);
-                              setDistrict({});
-                              setMicroDistrcit({});
+                              setDistrict({ children: [] });
+                              setMicroDistrcit({ children: [] });
+                              setCity("Весь Казахстан");
                             }}
                             className={`flex p-[12px] cursor-pointer ${
                               "Весь Казахстан" == address.regionOrCityName
@@ -237,23 +278,25 @@ const Header = () => {
                             }`}>
                             Весь Казахстан
                           </li>
-                          {all_addresses.map((city) => (
+                          {all_addresses.map((region) => (
                             <li
-                              key={city.id}
+                              key={region.id}
                               onClick={() => {
                                 setAdress((prevState) => ({
                                   ...prevState,
-                                  regionOrCityName: city.name,
+                                  regionOrCityName: region.name,
                                 }));
-                                setDistrict(city);
+                                setDistrict(region);
+                                setMicroDistrcit({ children: [] });
                                 setIsDistrictDropdownOpen(true);
+                                setCity(region.name);
                               }}
                               className={`flex p-[12px] cursor-pointer ${
-                                address.regionOrCityName === city.name
+                                address.regionOrCityName === region.name
                                   ? "bg-[#1aa68383] text-white"
                                   : ""
                               }`}>
-                              {city.name}
+                              {region.name}
                             </li>
                           ))}
                         </ul>
@@ -262,8 +305,8 @@ const Header = () => {
                         district &&
                         district?.children &&
                         district.children.length > 0 && (
-                          <div className="w-[214px] h-[380px] border-[1px] border-[#D6D6D6] rounded-[5px] overflow-y-auto scrollbar">
-                            {district.children.map((d) => (
+                          <div className="w-[214px] h-[380px] border-[1px] border-[#D6D6D6] text-[#252525] rounded-[5px] overflow-y-auto scrollbar">
+                            {district.children.map((d: any) => (
                               <li
                                 key={d.id}
                                 onClick={() => {
@@ -273,6 +316,7 @@ const Header = () => {
                                   }));
                                   setMicroDistrcit(d);
                                   setIsMicroDistrictDropdownOpen(true);
+                                  setCity(d.name);
                                 }}
                                 className={`flex p-[12px] cursor-pointer ${
                                   address.districtName === d.name
@@ -289,8 +333,8 @@ const Header = () => {
                         microDistrcit &&
                         microDistrcit?.children &&
                         microDistrcit.children.length > 0 && (
-                          <div className="w-[214px] h-[380px] border-[1px] border-[#D6D6D6] rounded-[5px] overflow-y-auto scrollbar">
-                            {microDistrcit.children.map((m) => (
+                          <div className="w-[214px] h-[380px] border-[1px] border-[#D6D6D6] text-[#252525] rounded-[5px] overflow-y-auto scrollbar">
+                            {microDistrcit.children.map((m: any) => (
                               <li
                                 key={m.id}
                                 onClick={() => {
@@ -298,6 +342,7 @@ const Header = () => {
                                     ...prevState,
                                     microDistrictName: m.name,
                                   }));
+                                  setCity(m.name);
                                 }}
                                 className={`flex p-[12px] cursor-pointer ${
                                   address.microDistrictName === m.name
@@ -318,102 +363,152 @@ const Header = () => {
                   </div>
                 )}
 
-                {/* Dropdown Content */}
                 <div
-                  onClick={togglePriceDropdown}
-                  className="font-circular w-1/2 text-center border-r-2 text-[#252525] font-medium text-[16px] leading-5">
-                  {minPrice} - {maxPrice}
+                  className="cursor-pointer flex w-[150px] pl-4 items-center border-r-2"
+                  onClick={() => {
+                    toggleAllDropDown();
+                    togglePriceDropdown();
+                  }}>
+                  <div className="flex items-center">
+                    <p className="font-circular text-left text-[14px] font-medium leading-[18px] text-[#252525]">
+                      {priceRange[0] || priceRange[1] != 500000
+                        ? `${priceRange[0]} - ${priceRange[1]}`
+                        : "Выберите цену"}
+                    </p>
+                  </div>
                 </div>
-
                 {isPriceDropdownOpen && (
                   <div
-                    className="flex flex-col absolute top-[70px] left-0 w-[500px] bg-white border border-gray-200 rounded-[5px] shadow-lg p-4 space-y-[24px] text-[#252525] text-[14px] leading-[17.5px] font-normal"
-                    onBlur={() => setIsPriceDropdownOpen(false)}>
-                    <h3 className="">Выберите цену</h3>
-                    <div className="flex space-x-4 mb-6">
+                    className="flex flex-col absolute top-[60px] left-0 w-[405px] bg-white border border-gray-200 rounded-[5px] shadow-lg p-4 space-y-[24px] text-[#252525] text-[14px] leading-[17.5px] font-normal"
+                    style={{
+                      boxShadow: "0px 4px 10px 0px rgba(0, 0, 0, 0.2)",
+                    }}>
+                    <h3 className="text-[#4B4B4B] text-left text-sm font-normal leading-7">
+                      Выберите цену
+                    </h3>
+
+                    <div className="flex space-x-[15px] mb-6">
                       <input
                         type="number"
-                        value={minPrice}
-                        onChange={handleMinPriceChange}
-                        className="w-full border border-gray-200 rounded-[5px] px-[10px] py-[9px] focus:outline-none focus:ring-2 focus:ring-[#1aa683]"
+                        value={priceRange[0]}
+                        onChange={(e) =>
+                          setPriceRange([+e.target.value, priceRange[1]])
+                        }
+                        className="text-[#4B4B4B] w-full border-[1px] border-[#D6D6D6] rounded-[5px] px-[10px] py-[9px] focus:outline-none focus:border-[#1aa683] text-sm font-normal leading-7 placeholder:text-[#D6D6D6] placeholder:font-normal placeholder:leading-7"
                         placeholder="Минимальный"
                       />
+
                       <input
                         type="number"
-                        value={maxPrice}
-                        onChange={handleMaxPriceChange}
-                        className="flex w-full border border-gray-200 rounded-[5px] px-[10px] py-[9px] focus:outline-none focus:ring-2 focus:ring-[#1aa683]"
+                        value={priceRange[1]}
+                        onChange={(e) =>
+                          setPriceRange([priceRange[0], +e.target.value])
+                        }
+                        className="text-[#4B4B4B] w-full border-[1px] border-[#D6D6D6] rounded-[5px] px-[10px] py-[9px] focus:outline-none focus:border-[#1aa683] text-sm font-normal leading-7 placeholder:text-[#D6D6D6] placeholder:font-normal placeholder:leading-7"
                         placeholder="Максимальный"
                       />
                     </div>
 
                     <div className="relative">
-                      <div className="flex justify-between text-[##1aa683] font-semibold mb-[5px]">
+                      <div className="flex justify-between text-[#1AA683] text-left font-semibold text-[12px] leading-[17px]">
                         <span>0</span>
                         <span>500000</span>
                       </div>
 
-                      <div className="relative">
-                        <div className="absolute top-1/2 w-full h-1 bg-gray-300 rounded-md transform -translate-y-1/2" />
-
-                        <div
-                          className="absolute top-1/2 h-1 bg-[#1aa683] rounded-md transform -translate-y-1/2"
-                          style={{
-                            left: `${(minPrice / 500000) * 100}%`,
-                            right: `${100 - (maxPrice / 500000) * 100}%`,
-                          }}
-                        />
-
-                        <input
-                          type="range"
-                          min="0"
-                          max="500000"
-                          value={maxPrice}
-                          onChange={(e) =>
-                            setMaxPrice(
-                              Math.max(Number(e.target.value), minPrice + 1000)
-                            )
-                          }
-                          className="absolute top-1/2 w-[100%] h-1 transform -translate-y-1/2 appearance-none bg-transparent pointer-events-auto custom-range"
-                        />
-
-                        <input
-                          type="range"
-                          min="0"
-                          max="500000"
-                          value={minPrice}
-                          onChange={(e) =>
-                            setMinPrice(
-                              Math.min(Number(e.target.value), maxPrice - 1000)
-                            )
-                          }
-                          className="absolute top-1/2 w-[100%] h-1 transform -translate-y-1/2 appearance-none bg-transparent pointer-events-auto custom-range"
-                        />
-                      </div>
+                      <Slider
+                        value={priceRange}
+                        id="price-range-slider"
+                        onChange={handleSliderChange}
+                        className="w-full
+                    [&_span.MuiSlider-thumb]:w-4 [&_span.MuiSlider-thumb]:h-4
+                    [&_span.MuiSlider-thumb]:bg-[#1AA683] [&_span.MuiSlider-thumb]:rounded-[30px] [&_span.MuiSlider-thumb]:border-[2px] [&_span.MuiSlider-thumb]:border-white
+                    [&_span.MuiSlider-track]:bg-[#1AA683] [&_span.MuiSlider-track]:border-none
+                    [&_span.MuiSlider-rail]:bg-[#1AA683]"
+                        valueLabelDisplay="auto"
+                        min={0}
+                        max={500000}
+                        step={5000}
+                      />
                     </div>
                   </div>
                 )}
 
                 <div
-                  onClick={toggleRoomDropdown}
-                  className="font-circular flex w-1/3 pl-4 text-[#252525] font-medium text-[16px] leading-5 cursor-pointer select-none">
-                  {selectedRoom} жителей
+                  className="cursor-pointer flex w-[150px] pl-4 items-center border-r-2"
+                  onClick={() => {
+                    toggleAllDropDown();
+                    toggleGenderDropdown();
+                  }}>
+                  <div className="flex items-center">
+                    <p className="font-circular text-left text-[14px] font-medium leading-[18px] text-[#252525]">
+                      {gender || "Выберите пол"}
+                    </p>
+                  </div>
                 </div>
 
-                {isRoomDropdownOpen && (
-                  <div className="absolute top-[70px] left-0 p-[20px] space-y-[24px] bg-white border border-gray-200 rounded-md shadow-lg text-[#252525]">
+                {isGenderDropdownOpen && (
+                  <div
+                    className="absolute top-[60px] left-0 px-[20px] pb-[12px] pt-[20px] bg-white space-y-[12px] min-w-[200px] rounded-[5px] text-left"
+                    style={{
+                      boxShadow: "0px 4px 10px 0px rgba(0, 0, 0, 0.2)",
+                    }}>
+                    <p className="text-[14px] font-normal leading-[17.5px] text-left text-[#252525]">
+                      Выберите пол
+                    </p>
+
+                    <ul className="flex flex-col">
+                      {genders.map((g) => (
+                        <li
+                          key={g.id}
+                          onClick={() => {
+                            setGender(g.name);
+                            // setIsGenderDropdownOpen(false);
+                          }}
+                          className={`${
+                            g.name === gender
+                              ? "bg-[#D1EDE6] text-[#1AA683]"
+                              : "bg-white text-[#252525]"
+                          } w-full px-[12px] py-[4px] rounded-[5px] cursor-pointer font-normal text-[14px] leading-[17.5px]`}>
+                          {g.name}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                <div
+                  onClick={() => {
+                    toggleAllDropDown();
+                    toggleHousematesDropdown();
+                  }}
+                  className="font-circular flex w-1/5 pl-4 text-[#252525] font-medium text-[16px] leading-5 cursor-pointer select-none">
+                  <div className="flex items-center">
+                    <p className="font-circular text-left text-[14px] font-medium leading-[18px] text-[#252525]">
+                      {/* {housemates + " жителей" || "Количество сожителей"} */}
+                      {housemates
+                        ? `${housemates} жителей`
+                        : "Количество сожителей"}
+                    </p>
+                  </div>
+                </div>
+                {isHousematesDropdownOpen && (
+                  <div className="absolute top-[60px] left-0 p-[20px] space-y-[24px] bg-white border border-gray-200 rounded-md shadow-lg text-[#252525]">
                     <div className="font-normal text-[14px] leading-[17.5px]">
                       Количество сожителей
                     </div>
                     <ul className="flex justify-between space-x-[7px]">
-                      {numberRoom.map((room) => (
+                      {housematesCount.map((room) => (
                         <li
                           key={room.id}
                           onClick={() => {
-                            setSelectedRoom(room.name);
-                            setIsRoomDropdownOpen(false);
+                            setHousemates(room.name);
+                            setIsHousematesDropdownOpen(false);
                           }}
-                          className={`flex items-center justify-center px-[12px] py-[4px] bg-[#D1EDE6] rounded-[5px] cursor-pointer font-normal text-[14px] leading-[17.5px] `}>
+                          className={`${
+                            housemates == room.name
+                              ? "bg-[#1AA683] text-[#FFFFFF]"
+                              : "bg-[#D1EDE6] text-[#5c5c5c]"
+                          } flex items-center justify-center px-[12px] py-[4px] rounded-[5px] cursor-pointer font-light text-[14px] leading-[17.5px] `}>
                           {room.name}
                         </li>
                       ))}
@@ -421,7 +516,9 @@ const Header = () => {
                   </div>
                 )}
 
-                <button className="flex justify-center items-center w-[30px] h-[30px] bg-[#1aa683] rounded">
+                <button
+                  className="flex justify-center items-center w-[30px] h-[30px] bg-[#1aa683] rounded"
+                  onClick={handleSearchSubmit}>
                   <Images.SearchIcon className="w-[16px] h-[16px]" />
                 </button>
               </div>
@@ -429,8 +526,10 @@ const Header = () => {
             </div>
           )}
           <div className="font-circular flex flex-row justify-between space-x-[8px]">
-            {!isLogin && (
-              <button className="flex justify-center items-center space-x-2 text-[#1aa683] font-bold px-[25px] h-[50px] rounded">
+            {!isAuth && (
+              <button
+                className="flex justify-center items-center space-x-2 text-[#1aa683] font-bold px-[25px] h-[50px] rounded"
+                onClick={() => router.push("/login")}>
                 <span>Войти</span>
               </button>
             )}
@@ -440,7 +539,7 @@ const Header = () => {
               <span>Подать объявление</span>
               <Images.ArrowRight />
             </button>
-            {!isLogin && (
+            {isAuth && (
               <button className="flex items-center space-x-2 px-[9px] h-[50px] rounded border border-[#1aa683]">
                 <Images.UserIcon className="w-[32px] h-[32px]" />
               </button>

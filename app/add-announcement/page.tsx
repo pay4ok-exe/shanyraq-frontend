@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useModal } from "../context/modal-context";
 import * as Images from "@/public/images";
 import { Slider } from "@mui/material";
-import ALL_ADDRESSES from "../login/result.json";
+import ALL_ADDRESSES from "@/app/result.json";
 import ToggleButton from "../../components/toggle";
 import { FileUpload } from "../../components/file-upload";
 
@@ -102,6 +102,7 @@ const AddAnnouncementModal = () => {
             setFormData={setFormData}
             handleNext={handleNext}
             handleBack={handleBack}
+            closeModal={closeModal}
           />
         </div>
       </div>
@@ -376,7 +377,7 @@ function StepBasicInfo({ handleNext, handleBack, formData, setFormData }: any) {
         <div className="flex items-center justify-around w-[120px] h-[40px] ml-[20px] border rounded-lg text-[20px] border-gray-300">
           {/* Minus Button */}
           <button
-            onClick={() => setRoommates((prev) => Math.max(prev - 1, 1))}
+            onClick={() => setRoommates((prev: any) => Math.max(prev - 1, 1))}
             className="">
             <Images.minus />
           </button>
@@ -388,7 +389,7 @@ function StepBasicInfo({ handleNext, handleBack, formData, setFormData }: any) {
 
           {/* Plus Button */}
           <button
-            onClick={() => setRoommates((prev) => Math.min(prev + 1, 10))}
+            onClick={() => setRoommates((prev: any) => Math.min(prev + 1, 10))}
             className="">
             <Images.plus />
           </button>
@@ -582,7 +583,7 @@ function StepApartmentDetails({
           />
           {isRegionDropdownOpen && (
             <div className="absolute z-10 w-full bg-white border border-gray-200 shadow-lg rounded-[5px] max-h-[150px] overflow-y-auto">
-              {regionsData.map((region) => (
+              {regionsData.map((region: any) => (
                 <div
                   key={region.name}
                   onClick={() => handleRegionSelect(region.name)}
@@ -612,7 +613,7 @@ function StepApartmentDetails({
             />
             {isDistrictDropdownOpen && (
               <div className="absolute z-10 w-full bg-white border border-gray-200 shadow-lg rounded-[5px] max-h-[150px] overflow-y-auto">
-                {districtsData.map((district) => (
+                {districtsData.map((district: any) => (
                   <div
                     key={district.name}
                     onClick={() => handleDistrictSelect(district.name)}
@@ -643,7 +644,7 @@ function StepApartmentDetails({
             />
             {isMicroDistrictDropdownOpen && (
               <div className="absolute z-10 w-full bg-white border border-gray-200 shadow-lg rounded-[5px] max-h-[150px] overflow-y-auto">
-                {microDistrictsData.map((microDistrict) => (
+                {microDistrictsData.map((microDistrict: any) => (
                   <div
                     key={microDistrict.name}
                     onClick={() =>
@@ -1273,7 +1274,7 @@ function StepApartmentFullDetails({
   );
 }
 
-function StepSuccess({ formData, setFormData }: any) {
+function StepSuccess({ formData, setFormData, closeModal }: any) {
   const adjectives = [
     "Платежеспособная/ный",
     "Чистоплотная/ный",
@@ -1292,6 +1293,9 @@ function StepSuccess({ formData, setFormData }: any) {
       selectedAdjectives,
     });
     console.log(formData);
+    setTimeout(() => {
+      closeModal();
+    }, 1000);
   };
   const handleCheckboxChange = (adj: string) => {
     setSelectedAdjectives((prevSelected) =>
