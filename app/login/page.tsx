@@ -28,8 +28,6 @@ const LoginPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Email:", email);
-    console.log("Password:", password);
 
     try {
       const response = await axiosInstance.post("/auth/login", {

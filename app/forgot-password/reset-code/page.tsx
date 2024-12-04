@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import Header from "@/components/header";
+import axiosInstance from "@/axiosInstance/axios";
 import Footer from "@/components/footer";
 import { useRouter } from "next/navigation";
 
@@ -10,9 +11,34 @@ const ResetCodePage = () => {
   const inputs = useRef<HTMLInputElement[]>([]);
   const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    router.push('/forgot-password/confirm-password')
+    const email = localStorage.getItem("email");
+    const codeString = code.join("");
+    try {
+      const response = await axiosInstance.post("/auth/forgot-password", {
+        email,
+        code: codeString,
+      });
+
+      router.push("/forgot-password/confirm-password");
+    } catch (error: any) {
+      console.error("Verification failed:", error);
+    }
+  };
+
+  const resend = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const email = localStorage.getItem("email");
+    try {
+      const response = await axiosInstance.post("/auth/resendCode", {
+        email,
+      });
+
+      alert("Resends the Code to your Email");
+    } catch (error: any) {
+      console.error("Verification failed:", error);
+    }
   };
 
   const processInput = (
@@ -89,7 +115,8 @@ const ResetCodePage = () => {
               {/* Back Button */}
               <button
                 type="button"
-                className="w-full font-circular font-semibold text-[16px] py-[20px] rounded-lg">
+                className="w-full font-circular font-semibold text-[16px] py-[20px] rounded-lg"
+                onClick={resend}>
                 Отправить код повторно
               </button>
             </form>

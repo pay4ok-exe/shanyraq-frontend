@@ -3,15 +3,27 @@
 import { useState } from "react";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import axiosInstance from "@/axiosInstance/axios";
 import { useRouter } from "next/navigation";
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
   const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    router.push("/forgot-password/reset-code");
+
+    try {
+        const response = await axiosInstance.post("/auth/forgot-password", {
+          email
+        });
+  
+        localStorage.setItem("email", email); 
+        router.push("/forgot-password/reset-code");
+        
+      }catch (error: any) {
+        console.error("Verification failed:", error);
+      }
   };
 
   return (

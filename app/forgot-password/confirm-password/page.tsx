@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import * as Image from "../../../public/images";
 import Header from "@/components/header";
+import axiosInstance from "@/axiosInstance/axios";
 import Footer from "@/components/footer";
 import { useRouter } from "next/navigation";
 
@@ -12,15 +13,32 @@ const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    router.push("/login");
+
+    if (password !== confirmPassword) {
+      alert("The Passwords are not same");
+      return;
+    }
+    const email = localStorage.getItem("email");
+    try {
+      const response = await axiosInstance.post("/auth/update-password", {
+        email,
+        password,
+      });
+
+      localStorage.removeItem("email");
+      router.push("/login");
+    } catch (error: any) {
+      console.error("Verification failed:", error);
+    }
   };
   const handleBackClick = () => {
     const userConfirmed = window.confirm(
       "Вы уверены, что не хотите изменить свой пароль?"
     );
     if (userConfirmed) {
+      localStorage.removeItem("email");
       router.push("/login"); // Navigate to login if confirmed
     }
   };

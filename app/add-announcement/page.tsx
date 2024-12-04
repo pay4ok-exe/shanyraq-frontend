@@ -7,21 +7,30 @@ import * as Images from "@/public/images";
 import { Slider } from "@mui/material";
 import ALL_ADDRESSES from "@/app/result.json";
 import ToggleButton from "../../components/toggle";
+import { useRouter } from "next/navigation";
+import axiosInstance from "@/axiosInstance/axios";
 import { FileUpload } from "../../components/file-upload";
 
 const AddAnnouncementModal = () => {
+  const router = useRouter();
   const { isModalOpen, closeModal } = useModal();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
-    role: "",
+    role: "Я житель",
     title: "",
     gender: "",
-    housematesCount: 0,
+    roommates: 1,
+    peopleInApartment: 0,
+    region: "",
+    district: "",
+    microDistrict: "",
     address: "",
     moveInDate: "",
     monthlyPayment: "",
+    livingInHome: true,
+    ageRange: [18, 50],
     deposit: false,
-    depositAmount: "",
+    depositAmount: 0,
     apartmentDetails: {
       petsAllowed: false,
       utilitiesIncluded: false,
@@ -30,10 +39,108 @@ const AddAnnouncementModal = () => {
       badHabitsAllowed: false,
       description: "",
       photos: [],
-      rooms: 0,
+      rooms: "1",
+      propertyType: "",
+      floorsFrom: 1,
+      floorsTo: 3,
+      ownerPhone: "",
+      longTerm: false,
     },
     selectedAdjectives: [],
   });
+
+  const handleSubmit = async () => {
+    try {
+      console.log("Form data before submission:", formData);
+      // Prepare the data for the POST request based on the formData
+      const requestData = {
+        role: formData.role,
+        title: formData.title,
+        selectedGender: formData.gender,
+        doYouLiveInThisHouse: formData.livingInHome, // Assume true if there are housemates
+        howManyPeopleLiveInThisApartment: formData.peopleInApartment.toString(),
+        numberOfPeopleAreYouAccommodating: formData.roommates,
+        minAge: formData.ageRange[0], // Default to 0 if not specified
+        maxAge: formData.ageRange[1], // Default to 0 if not specified
+        region: formData.region, // Set default if missing
+        district: formData.district, // Set default if missing
+        microDistrict: formData.microDistrict, // Set default if missing
+        address: formData.address,
+        arriveDate: formatDate(formData.moveInDate), // Default to today's date or empty if not provided
+        cost: parseInt(formData.monthlyPayment), // Parse monthlyPayment as a number
+        quantityOfRooms: formData.apartmentDetails.rooms,
+        isDepositRequired: formData.deposit,
+        deposit: parseInt(formData.depositAmount.toString()),
+        arePetsAllowed: formData.apartmentDetails.petsAllowed,
+        isCommunalServiceIncluded: formData.apartmentDetails.utilitiesIncluded,
+        minAmountOfCommunalService:
+          formData.apartmentDetails.utilitiesAmount[0],
+        maxAmountOfCommunalService:
+          formData.apartmentDetails.utilitiesAmount[1],
+        intendedForStudents: formData.apartmentDetails.forStudents,
+        areBadHabitsAllowed: formData.apartmentDetails.badHabitsAllowed,
+        apartmentsInfo: formData.apartmentDetails.description,
+        images: formData.apartmentDetails.photos, // Assuming there are photos
+        typeOfHousing: formData.apartmentDetails.propertyType, // Set default
+        numberOfFloor: parseInt(formData.apartmentDetails.rooms), // Adjust if necessary
+        maxFloorInTheBuilding: formData.apartmentDetails.floorsFrom, // Adjust as per your data
+        areaOfTheApartment: formData.apartmentDetails.floorsTo, // Adjust if necessary
+        forALongTime: formData.apartmentDetails.longTerm, // Adjust according to your data
+        phoneNumber: formData.apartmentDetails.ownerPhone, // Assuming you store the owner's phone in formData
+        preferences: formData.selectedAdjectives, // Assuming selectedAdjectives as preferences
+      };
+
+      // Send the data to the server
+      const response = await axiosInstance.post(
+        "/announcement/create",
+        requestData
+      );
+
+      // Handle successful response
+      console.log("Announcement created successfully", response);
+
+      // Optionally, reset form data or redirect after successful submission
+      setFormData({
+        role: "Я житель",
+        title: "",
+        gender: "",
+        roommates: 1,
+        peopleInApartment: 0,
+        region: "",
+        district: "",
+        microDistrict: "",
+        address: "",
+        moveInDate: "",
+        monthlyPayment: "",
+        deposit: false,
+        livingInHome: true,
+        ageRange: [18, 50],
+        depositAmount: 0,
+        apartmentDetails: {
+          petsAllowed: false,
+          utilitiesIncluded: false,
+          utilitiesAmount: [0, 5000],
+          forStudents: false,
+          badHabitsAllowed: false,
+          description: "",
+          photos: [],
+          rooms: "1",
+          propertyType: "",
+          floorsFrom: 1,
+          floorsTo: 3,
+          ownerPhone: "",
+          longTerm: false,
+        },
+        selectedAdjectives: [],
+      });
+
+      setCurrentStep(1);
+
+      router.push("/landing"); // Redirect to login or another page after success
+    } catch (error: any) {
+      console.error("Announcement creation failed:", error);
+    }
+  };
 
   const steps = [
     { id: 1, name: "Роль", component: StepRole },
@@ -79,8 +186,13 @@ const AddAnnouncementModal = () => {
 
   if (!isModalOpen) return null;
 
-  const handleSubmit = () => {
-    console.log(formData);
+  const formatDate = (date: string) => {
+    const parsedDate = new Date(date);
+    if (isNaN(parsedDate.getTime())) {
+      // If the date is invalid, return the default value
+      return "2024-12-03";
+    }
+    return parsedDate.toISOString().split("T")[0]; // Formats as "YYYY-MM-DD"
   };
 
   return (
@@ -90,7 +202,6 @@ const AddAnnouncementModal = () => {
         <button
           className="absolute top-4 right-4 text-gray-600 hover:text-gray-900 text-2xl"
           onClick={() => {
-            // setCurrentStep(1);
             if (currentStep === 6) handleSubmit();
             closeModal();
           }}>
@@ -103,6 +214,7 @@ const AddAnnouncementModal = () => {
             handleNext={handleNext}
             handleBack={handleBack}
             closeModal={closeModal}
+            handleSubmit={handleSubmit}
           />
         </div>
       </div>
@@ -113,7 +225,7 @@ const AddAnnouncementModal = () => {
 export default AddAnnouncementModal;
 
 function StepRole({ handleNext, formData, setFormData }: any) {
-  const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const [selectedRole, setSelectedRole] = useState(formData.role || "");
   const [error, setError] = useState<boolean>(false);
 
   const handleSelect = (role: string) => {
@@ -123,9 +235,10 @@ function StepRole({ handleNext, formData, setFormData }: any) {
 
   const handleProceed = () => {
     if (selectedRole) {
+      const role = selectedRole === "Я хозяин" ? "Я хозяин" : "Я житель";
       setFormData({
         ...formData,
-        role: selectedRole,
+        role: role,
       });
       handleNext();
     } else {
@@ -145,10 +258,10 @@ function StepRole({ handleNext, formData, setFormData }: any) {
 
       <div className="space-y-4">
         {/* Option: Я хозяин */}
-        <button
-          onClick={() => handleSelect("owner")}
+        {/* <button
+          onClick={() => handleSelect("Я хозяин")}
           className={`w-full flex items-center border rounded-lg p-4 transition ${
-            selectedRole === "owner"
+            selectedRole === "Я хозяин"
               ? "border-[#1AA683] bg-[#E6F8F2]"
               : "border-gray-300 hover:bg-gray-100"
           }`}>
@@ -165,13 +278,13 @@ function StepRole({ handleNext, formData, setFormData }: any) {
               </p>
             </div>
           </div>
-        </button>
+        </button> */}
 
         {/* Option: Я житель */}
         <button
-          onClick={() => handleSelect("tenant")}
+          onClick={() => handleSelect("Я житель")}
           className={`w-full flex items-center border rounded-lg p-4 transition ${
-            selectedRole === "tenant"
+            selectedRole === "Я житель"
               ? "border-[#1AA683] bg-[#E6F8F2]"
               : "border-gray-300 hover:bg-gray-100"
           }`}>
@@ -463,10 +576,10 @@ function StepApartmentDetails({
   const [monthlyPayment, setMonthlyPayment] = useState(
     formData.monthlyPayment || ""
   );
-  const [rooms, setRooms] = useState(formData.rooms || 1);
+  const [rooms, setRooms] = useState(formData.rooms || "1");
   const [deposit, setDeposit] = useState(formData.deposit || false);
   const [depositAmount, setDepositAmount] = useState(
-    formData.depositAmount || ""
+    formData.depositAmount || 0
   );
 
   const [regionsData, setRegionsData] = useState([]); // Fetch or import region data
@@ -488,7 +601,7 @@ function StepApartmentDetails({
       microDistrict &&
       moveInDate &&
       monthlyPayment &&
-      (deposit ? depositAmount.trim() !== "" : true)
+      (deposit ? depositAmount !== 0 : true)
     ) {
       setIsNextDisabled(false);
     } else {
@@ -707,7 +820,7 @@ function StepApartmentDetails({
           Сколько комнат в квартире?
         </label>
         <ul className="flex ml-[20px] space-x-[16px]">
-          {[1, 2, 3, 4, "5+"].map((room) => (
+          {["1", "2", "3", "4", "5+"].map((room) => (
             <li
               key={room}
               onClick={() => {
@@ -793,19 +906,25 @@ function StepApartmentAdditionallyDetails({
   formData,
   setFormData,
 }: any) {
-  const [petsAllowed, setPetsAllowed] = useState(formData.petsAllowed || false);
+  const [petsAllowed, setPetsAllowed] = useState(
+    formData.apartmentDetails.petsAllowed || false
+  );
   const [utilitiesIncluded, setUtilitiesIncluded] = useState(
-    formData.utilitiesIncluded || true
+    formData.apartmentDetails.utilitiesIncluded || true
   );
   const [utilitiesAmount, setUtilitiesAmount] = useState(
-    formData.utilitiesAmount || [0, 5000]
+    formData.apartmentDetails.utilitiesAmount || [0, 5000]
   );
-  const [forStudents, setForStudents] = useState(formData.forStudents || false);
+  const [forStudents, setForStudents] = useState(
+    formData.apartmentDetails.forStudents || false
+  );
   const [badHabitsAllowed, setBadHabitsAllowed] = useState(
-    formData.badHabitsAllowed || false
+    formData.apartmentDetails.badHabitsAllowed || false
   );
-  const [description, setDescription] = useState(formData.description || "");
-  const [photos, setPhotos] = useState(formData.photos || []);
+  const [description, setDescription] = useState(
+    formData.apartmentDetails.description || ""
+  );
+  const [photos, setPhotos] = useState(formData.apartmentDetails.photos || []);
 
   const [isNextDisabled, setIsNextDisabled] = useState(true);
 
@@ -820,13 +939,17 @@ function StepApartmentAdditionallyDetails({
   // Update the form data and proceed to the next step
   const handleSubmit = () => {
     setFormData({
-      ...formData,
-      petsAllowed,
-      utilitiesIncluded,
-      forStudents,
-      badHabitsAllowed,
-      description,
-      photos,
+      ...formData, // spread the previous form data
+      apartmentDetails: {
+        ...formData.apartmentDetails, // spread apartmentDetails to preserve other fields
+        petsAllowed,
+        utilitiesIncluded,
+        utilitiesAmount,
+        forStudents,
+        badHabitsAllowed,
+        description,
+        photos,
+      },
     });
     handleNext();
   };
@@ -834,7 +957,15 @@ function StepApartmentAdditionallyDetails({
   // Run validation on description or photos change
   useEffect(() => {
     validateForm();
-  }, [description, photos]);
+  }, [
+    petsAllowed,
+    utilitiesIncluded,
+    utilitiesAmount,
+    forStudents,
+    badHabitsAllowed,
+    description,
+    photos,
+  ]);
 
   const handleUtilitiesAmountChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -956,22 +1087,32 @@ function StepApartmentFullDetails({
   setFormData,
 }: any) {
   const [propertyType, setPropertyType] = useState(
-    formData.propertyType || "Квартира"
+    formData.apartmentDetails.propertyType || ""
   );
-  const [floorsFrom, setFloorsFrom] = useState(formData.floorsFrom || 1);
-  const [floorsTo, setFloorsTo] = useState(formData.floorsTo || 5);
-  const [roomSize, setRoomSize] = useState(formData.roomSize || "");
-  const [complex, setComplex] = useState(formData.complex || "");
-  const [nearBy, setNearBy] = useState(formData.nearBy || "");
-  const [longTerm, setLongTerm] = useState(formData.longTerm || false);
-  const [ownerName, setOwnerName] = useState(formData.ownerName || "");
-  const [ownerPhones, setOwnerPhones] = useState(formData.ownerPhones || [""]);
-  const [residentNames, setResidentNames] = useState(
-    formData.residentNames || [""]
+  const [floorsFrom, setFloorsFrom] = useState(
+    formData.apartmentDetails.floorsFrom || 1
   );
-  const [residentPhones, setResidentPhones] = useState(
-    formData.residentPhones || [""]
+  const [floorsTo, setFloorsTo] = useState(
+    formData.apartmentDetails.floorsTo || 3
   );
+  const [roomSize, setRoomSize] = useState(
+    formData.apartmentDetails.roomSize || ""
+  );
+  // const [complex, setComplex] = useState(formData.complex || "");
+  // const [nearBy, setNearBy] = useState(formData.nearBy || "");
+  const [longTerm, setLongTerm] = useState(
+    formData.apartmentDetails.longTerm || false
+  );
+  // const [ownerName, setOwnerName] = useState(formData.ownerName || "");
+  const [ownerPhone, setOwnerPhone] = useState(
+    formData.apartmentDetails.ownerPhone || ""
+  );
+  // const [residentNames, setResidentNames] = useState(
+  //   formData.residentNames || [""]
+  // );
+  // const [residentPhones, setResidentPhones] = useState(
+  //   formData.residentPhones || [""]
+  // );
 
   const [isNextDisabled, setIsNextDisabled] = useState(true);
 
@@ -981,7 +1122,8 @@ function StepApartmentFullDetails({
       floorsFrom >= 0 &&
       floorsTo >= 0 &&
       floorsFrom <= floorsTo &&
-      roomSize > 0
+      roomSize > 0 &&
+      ownerPhone
     ) {
       setIsNextDisabled(false);
     } else {
@@ -993,17 +1135,15 @@ function StepApartmentFullDetails({
   const handleSubmit = () => {
     setFormData({
       ...formData,
-      propertyType,
-      floorsFrom,
-      floorsTo,
-      roomSize,
-      complex,
-      nearBy,
-      longTerm,
-      ownerName,
-      ownerPhones,
-      residentNames,
-      residentPhones,
+      apartmentDetails: {
+        ...formData.apartmentDetails,
+        propertyType,
+        floorsFrom,
+        floorsTo,
+        roomSize,
+        longTerm,
+        ownerPhone,
+      },
     });
     handleNext();
   };
@@ -1011,7 +1151,7 @@ function StepApartmentFullDetails({
   // Run validation on changes
   useEffect(() => {
     validateForm();
-  }, [propertyType, floorsFrom, floorsTo, roomSize]);
+  }, [propertyType, floorsFrom, floorsTo, roomSize, longTerm, ownerPhone]);
 
   return (
     <div className="flex flex-col gap-[36px]">
@@ -1094,6 +1234,7 @@ function StepApartmentFullDetails({
         <input
           type="number"
           value={roomSize}
+          placeholder="Введите площадь комнаты"
           onChange={(e) =>
             setRoomSize(parseInt(e.target.value.trim() ? e.target.value : "0"))
           }
@@ -1102,7 +1243,7 @@ function StepApartmentFullDetails({
       </div>
 
       {/* Complex / Microdistrict */}
-      <div className="flex flex-col gap-[12px] w-full">
+      {/* <div className="flex flex-col gap-[12px] w-full">
         <label className="block text-[16px] font-semibold leading-[20px] text-[#252525]">
           Выберите жилой комплекс/ микрорайон
         </label>
@@ -1114,10 +1255,10 @@ function StepApartmentFullDetails({
           placeholder="Поиск..."
           className="w-full border-[1px] font-normal border-[#EBEBEB] rounded-[5px] px-[15px] py-[10px] text-[16px] text-[#252525] outline-none focus:outline-none focus:border-[#1aa683]"
         />
-      </div>
+      </div> */}
 
       {/* Nearby */}
-      <div className="flex flex-col gap-[12px] w-full">
+      {/* <div className="flex flex-col gap-[12px] w-full">
         <label className="block text-[16px] font-semibold leading-[20px] text-[#252525]">
           Пересечение с
         </label>
@@ -1130,35 +1271,39 @@ function StepApartmentFullDetails({
             placeholder="Находится возле..."
             className="w-full border-[1px] border-[#EBEBEB] rounded-[5px] px-[15px] py-[10px] text-[16px] text-[#252525] outline-none focus:outline-none focus:border-[#1aa683]"
           />
-          {/* Long Term */}
           <ToggleButton
             label="На долгий срок?"
             value={longTerm}
             onChange={setLongTerm}
           />
         </div>
-      </div>
+      </div> */}
+
+      {/* Long Term */}
+      <ToggleButton
+        label="На долгий срок?"
+        value={longTerm}
+        onChange={setLongTerm}
+      />
 
       <hr />
 
       {/* Owner Contact */}
       <div className="flex flex-col gap-[20px] w-full">
         <label className="block text-[16px] font-semibold leading-[20px] text-[#252525]">
-          Добавление контактов хозяина
+          Добавление номера телефоны
         </label>
         <div className="flex flex-col gap-[12px]">
-          <label className="block text-[16px] font-normal leading-[20px] text-[#252525]">
-            Имя хозяина
-          </label>
           <input
             type="text"
-            value={ownerName}
-            onChange={(e) => setOwnerName(e.target.value)}
-            placeholder="Игорь"
+            value={ownerPhone}
+            onChange={(e) => setOwnerPhone(e.target.value)}
+            required
+            placeholder="Введите номер телефона"
             className="w-full border-[1px] border-[#EBEBEB] rounded-[5px] px-[15px] py-[10px] text-[16px] text-[#252525] outline-none focus:outline-none focus:border-[#1aa683]"
           />
         </div>
-        <div className="flex flex-col gap-[12px]">
+        {/* <div className="flex flex-col gap-[12px]">
           <label className="block text-[16px] font-normal leading-[20px] text-[#252525]">
             Контактные телефоны
           </label>
@@ -1177,7 +1322,6 @@ function StepApartmentFullDetails({
                 className={`w-6 h-6 flex items-center mr-2 justify-center rounded border outline-none ${
                   false ? "border-[#1AA683]" : "border-gray-300"
                 }`}>
-                {/* {propertyType === "Квартира" && <Images.check />} */}
               </div>
               +7 747 777 66 55
             </label>
@@ -1188,12 +1332,12 @@ function StepApartmentFullDetails({
               </p>
             </label>
           </div>
-        </div>
+        </div> */}
       </div>
 
-      <hr />
+      {/* <hr /> */}
       {/* Residents Contact */}
-      <div className="flex flex-col gap-[20px] w-full">
+      {/* <div className="flex flex-col gap-[20px] w-full">
         <label className="block text-[16px] font-semibold leading-[20px] text-[#252525]">
           Добавление контактов жителей
         </label>
@@ -1228,7 +1372,6 @@ function StepApartmentFullDetails({
                 className={`w-6 h-6 flex items-center mr-2 justify-center rounded border outline-none ${
                   false ? "border-[#1AA683]" : "border-gray-300"
                 }`}>
-                {/* {propertyType === "Квартира" && <Images.check />} */}
               </div>
               +7 747 777 66 55
             </label>
@@ -1240,9 +1383,9 @@ function StepApartmentFullDetails({
             </label>
           </div>
         </div>
-      </div>
+      </div> */}
 
-      <button
+      {/* <button
         // onClick={handleBack}
         disabled
         className="w-full flex items-center justify-center gap-[12px] py-[16px] border-[1px] border-[#252525] rounded-lg hover:bg-gray-100">
@@ -1250,7 +1393,7 @@ function StepApartmentFullDetails({
         <p className="text-[16px] font-normal leading-[20px] text-left text-[#252525]">
           Добавить еще телефоны
         </p>
-      </button>
+      </button> */}
 
       {/* Navigation Buttons */}
       <div className="flex justify-between items-center mt-[25px] pt-[25px] border-t-[1px]">
@@ -1274,7 +1417,7 @@ function StepApartmentFullDetails({
   );
 }
 
-function StepSuccess({ formData, setFormData, closeModal }: any) {
+function StepSuccess({ formData, setFormData, closeModal, handleSubmit }: any) {
   const adjectives = [
     "Платежеспособная/ный",
     "Чистоплотная/ный",
@@ -1287,16 +1430,13 @@ function StepSuccess({ formData, setFormData, closeModal }: any) {
 
   const [selectedAdjectives, setSelectedAdjectives] = useState<string[]>([]);
 
-  const handleSubmit = () => {
-    setFormData({
-      ...formData,
+  useEffect(() => {
+    setFormData((prevFormData: any) => ({
+      ...prevFormData,
       selectedAdjectives,
-    });
-    console.log(formData);
-    setTimeout(() => {
-      closeModal();
-    }, 1000);
-  };
+    }));
+  }, [selectedAdjectives, setFormData]);
+
   const handleCheckboxChange = (adj: string) => {
     setSelectedAdjectives((prevSelected) =>
       prevSelected.includes(adj)
