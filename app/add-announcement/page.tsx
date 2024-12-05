@@ -45,6 +45,7 @@ const AddAnnouncementModal = () => {
       floorsTo: 3,
       ownerPhone: "",
       longTerm: false,
+      roomSize: 0,
     },
     selectedAdjectives: [],
   });
@@ -82,9 +83,9 @@ const AddAnnouncementModal = () => {
         apartmentsInfo: formData.apartmentDetails.description,
         images: formData.apartmentDetails.photos, // Assuming there are photos
         typeOfHousing: formData.apartmentDetails.propertyType, // Set default
-        numberOfFloor: parseInt(formData.apartmentDetails.rooms), // Adjust if necessary
+        numberOfFloor: formData.apartmentDetails.floorsTo, // Adjust if necessary
         maxFloorInTheBuilding: formData.apartmentDetails.floorsFrom, // Adjust as per your data
-        areaOfTheApartment: formData.apartmentDetails.floorsTo, // Adjust if necessary
+        areaOfTheApartment: formData.apartmentDetails.roomSize, // Adjust if necessary
         forALongTime: formData.apartmentDetails.longTerm, // Adjust according to your data
         phoneNumber: formData.apartmentDetails.ownerPhone, // Assuming you store the owner's phone in formData
         preferences: formData.selectedAdjectives, // Assuming selectedAdjectives as preferences
@@ -130,6 +131,7 @@ const AddAnnouncementModal = () => {
           floorsTo: 3,
           ownerPhone: "",
           longTerm: false,
+          roomSize: 0,
         },
         selectedAdjectives: [],
       });
@@ -387,12 +389,16 @@ function StepBasicInfo({ handleNext, handleBack, formData, setFormData }: any) {
       <div className="flex flex-col gap-[12px] w-full">
         <label className="block text-[16px] font-semibold leading-[20px] text-[#252525]">
           Заголовок объявления:
-          {title.trim().length < 10 && <p className="mt-4 text-[14px] font-normal text-red-500">минимум: 10 символов</p>}
+          {title.trim().length < 10 && (
+            <p className="mt-4 text-[14px] font-normal text-red-500">
+              минимум: 10 символов
+            </p>
+          )}
         </label>
         <input
           type="text"
           value={title}
-          onChange={(e) => setTitle(e.target.value.trim())}
+          onChange={(e) => setTitle(e.target.value)}
           placeholder="Введите заголовок"
           className="w-full border-[1px] border-[#EBEBEB] rounded-[5px] px-[15px] py-[10px] text-[16px] text-[#252525] outline-none focus:outline-none focus:border-[#1aa683] placeholder:text-[#B5B7C0]"
         />
@@ -931,7 +937,7 @@ function StepApartmentAdditionallyDetails({
   const [isNextDisabled, setIsNextDisabled] = useState(true);
 
   const validateForm = () => {
-    if (description.trim().length >= 10  && photos.length >= 5) {
+    if (description.trim().length >= 10 && photos.length >= 5) {
       setIsNextDisabled(false);
     } else {
       setIsNextDisabled(true);
@@ -1044,7 +1050,11 @@ function StepApartmentAdditionallyDetails({
       <div className="flex flex-col gap-[12px] w-full">
         <label className="block text-[16px] font-semibold leading-[20px] text-[#252525]">
           Описание квартиры:
-          {description.trim().length < 10 && <p className="mt-4 text-[14px] font-normal text-red-500">минимум: 10 символов</p>}
+          {description.trim().length < 10 && (
+            <p className="mt-4 text-[14px] font-normal text-red-500">
+              минимум: 10 символов
+            </p>
+          )}
         </label>
         <textarea
           value={description}

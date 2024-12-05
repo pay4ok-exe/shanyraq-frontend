@@ -75,7 +75,7 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col justify-between">
-      <Header />
+      <Header isFilterResults={false} />
       <div className="flex-grow w-[1300px] mx-auto mt-[50px]">
         <div
           className="relative w-full h-[560px]"

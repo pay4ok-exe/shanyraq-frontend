@@ -5,10 +5,12 @@ function ToggleButton({
   label,
   value,
   onChange,
+  className,
 }: {
   label: string;
   value: boolean;
   onChange: (checked: boolean) => void;
+  className?: string;
 }) {
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -18,7 +20,12 @@ function ToggleButton({
   };
   return (
     <div className="flex items-center justify-between w-full">
-      <label className="block text-[16px] font-normal leading-[20px] text-[#252525]">
+      <label
+        className={`${
+          className
+            ? className
+            : "block text-[16px] font-normal leading-[20px] text-[#252525]"
+        }`}>
         {label}
       </label>
       <FormControlLabel

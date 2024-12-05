@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 // import { useRouter } from 'next/navigation'; // Удаляем этот импорт
 import axiosInstance from "@/axiosInstance/axios";
 import Header from "../../../components/header";
@@ -36,13 +36,11 @@ interface Announcement {
 }
 
 interface AnnouncementPageProps {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;  
 }
 
 const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
-  const { id } = params; // Получаем id из параметров маршрута
+  const { id } = use(params); // Получаем id из параметров маршрута
 
   const [announcement, setAnnouncement] = useState<Announcement | null>(null);
   const [loading, setLoading] = useState(true);

@@ -223,7 +223,7 @@ const Header: React.FC<HeaderProps> = ({ isFilterResults }) => {
               Şañyraq
             </h1>
           </div>
-          {isFilterResults && (
+          {isAuth && isFilterResults && (
             <div className="flex items-center space-x-2">
               <div className="relative flex items-center justify-around p-2 h-[60px] bg-white border border-gray-300 rounded-md shadow-md min-w-[700px]">
                 <div
