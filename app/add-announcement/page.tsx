@@ -135,6 +135,7 @@ const AddAnnouncementModal = () => {
       });
 
       setCurrentStep(1);
+      closeModal();
 
       router.push("/landing"); // Redirect to login or another page after success
     } catch (error: any) {
@@ -224,7 +225,7 @@ const AddAnnouncementModal = () => {
 
 export default AddAnnouncementModal;
 
-function StepRole({ handleNext, formData, setFormData }: any) {
+function StepRole({ handleNext, formData, setFormData, closeModal }: any) {
   const [selectedRole, setSelectedRole] = useState(formData.role || "");
   const [error, setError] = useState<boolean>(false);
 
@@ -314,9 +315,9 @@ function StepRole({ handleNext, formData, setFormData }: any) {
       <div className="flex justify-between items-center mt-[25px] pt-[25px] border-t-[1px]">
         <button
           className="px-[38px] py-[15px] text-[16px] font-bold leading-[20px] outline-none tracking-[0.2px] text-[#252525] border-[1px] border-[#252525] rounded-[5px]"
-          onClick={() => setSelectedRole(null)} // Reset role selection on cancel
+          onClick={() => closeModal()} // Reset role selection on cancel
         >
-          Отменить
+          Закрыть
         </button>
         <button
           onClick={handleProceed}
@@ -349,7 +350,7 @@ function StepBasicInfo({ handleNext, handleBack, formData, setFormData }: any) {
   const [isNextDisabled, setIsNextDisabled] = useState(true);
 
   const validateForm = () => {
-    if (title.trim() && gender && peopleInApartment) {
+    if (title.trim().length >= 10 && gender && peopleInApartment) {
       setIsNextDisabled(false);
     } else {
       setIsNextDisabled(true);
@@ -386,6 +387,7 @@ function StepBasicInfo({ handleNext, handleBack, formData, setFormData }: any) {
       <div className="flex flex-col gap-[12px] w-full">
         <label className="block text-[16px] font-semibold leading-[20px] text-[#252525]">
           Заголовок объявления:
+          {title.trim().length < 10 && <p className="mt-4 text-[14px] font-normal text-red-500">минимум: 10 символов</p>}
         </label>
         <input
           type="text"
@@ -929,7 +931,7 @@ function StepApartmentAdditionallyDetails({
   const [isNextDisabled, setIsNextDisabled] = useState(true);
 
   const validateForm = () => {
-    if (description.trim() && photos.length >= 5) {
+    if (description.trim().length >= 10  && photos.length >= 5) {
       setIsNextDisabled(false);
     } else {
       setIsNextDisabled(true);
@@ -1042,11 +1044,12 @@ function StepApartmentAdditionallyDetails({
       <div className="flex flex-col gap-[12px] w-full">
         <label className="block text-[16px] font-semibold leading-[20px] text-[#252525]">
           Описание квартиры:
+          {description.trim().length < 10 && <p className="mt-4 text-[14px] font-normal text-red-500">минимум: 10 символов</p>}
         </label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="Введите описание"
+          placeholder="Введите описание "
           className="w-full h-[150px] border-[1px] border-[#EBEBEB] rounded-[5px] px-[15px] py-[10px] text-[16px] text-[#252525] outline-none focus:outline-none focus:border-[#1aa683] placeholder:text-[#B5B7C0]"
         />
       </div>

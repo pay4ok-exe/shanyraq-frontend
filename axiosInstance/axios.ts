@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseURL = "http://172.20.10.4:8080/api";
+const baseURL = "https://shanyraqnew-production.up.railway.app/api";
 const axiosInstance = axios.create({
   baseURL: baseURL, // Base URL
   headers: {

@@ -40,15 +40,15 @@ const LoginPage = () => {
 
       if (accessToken) {
         localStorage.setItem("token", accessToken); // Store token in sessionStorage
-        setIsAuth(true);
         console.log("Login successful");
-
+        
         // Optionally, update the authentication state (e.g., user info)
         // setUser(response.data.user); // Store user info if needed
-
+        
         // Redirect to the home page or other protected route
         window.location.href = "/landing";
         router.push("/landing"); // Or use a router like `react-router` for navigation
+        setIsAuth(true);
       }
     } catch (error: any) {
       console.error(
