@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import * as Images from "../public/images";
 
 const Footer = () => {
@@ -14,7 +15,11 @@ const Footer = () => {
             </h1>
           </div>
           <div className="font-medium text-[16px] leading-[20px] text-[#b5b7c0]">
-            © 2024 shanyraq.kz, все права защищены
+            © 2024{" "}
+            <Link href="/landing" className="hover:underline">
+              shanyraq.kz
+            </Link>
+            , все права защищены
           </div>
           <div className="flex space-x-2">
             <Images.TelegramIcon className="w-[28px] h-[28px]" />

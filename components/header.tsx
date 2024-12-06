@@ -14,6 +14,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ isFilterResults }) => {
   const router = useRouter();
   const [isAuth, setIsAuth] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -22,7 +23,7 @@ const Header: React.FC<HeaderProps> = ({ isFilterResults }) => {
       setIsAuth(false);
     }
   }, []);
-  
+
   const [city, setCity] = useState("");
   const [gender, setGender] = useState("");
   const [housemates, setHousemates] = useState("");
@@ -130,6 +131,11 @@ const Header: React.FC<HeaderProps> = ({ isFilterResults }) => {
 
   const { openModal } = useModal();
 
+  const handleCreateAnn = () => {
+    if (isAuth) openModal();
+    else router.push("/auth-required");
+  };
+
   return (
     <header className="min-w-full">
       <div className="max-w-[1300px] mx-auto mt-6 space-y-3">
@@ -217,12 +223,12 @@ const Header: React.FC<HeaderProps> = ({ isFilterResults }) => {
           </div>
         </section>
         <section className="flex flex-row justify-between">
-          <div className="flex items-center space-x-2">
+          <Link href="/" className="flex items-center space-x-2 cursor-pointer">
             <Images.Logo className="w-[50px] h-[50px]" />
             <h1 className="font-circular font-semibold text-[28px] leading-[38px]">
               Şañyraq
             </h1>
-          </div>
+          </Link>
           {isAuth && isFilterResults && (
             <div className="flex items-center space-x-2">
               <div className="relative flex items-center justify-around p-2 h-[60px] bg-white border border-gray-300 rounded-md shadow-md min-w-[700px]">
@@ -535,14 +541,33 @@ const Header: React.FC<HeaderProps> = ({ isFilterResults }) => {
             )}
             <button
               className="flex justify-center items-center space-x-2 bg-[#1aa683] text-white font-bold px-[25px] h-[50px] rounded"
-              onClick={openModal}>
+              onClick={handleCreateAnn}>
               <span>Подать объявление</span>
               <Images.ArrowRight />
             </button>
             {isAuth && (
-              <button className="flex items-center space-x-2 px-[9px] h-[50px] rounded border border-[#1aa683]">
-                <Images.UserIcon className="w-[32px] h-[32px]" />
-              </button>
+              <div className="relative">
+                <button
+                  className="flex items-center space-x-2 px-[9px] h-[50px] rounded border border-[#1aa683]"
+                  onClick={() => setDropdownOpen(!dropdownOpen)}>
+                  <Images.UserIcon className="w-[32px] h-[32px]" />
+                </button>
+                {/* Dropdown Menu */}
+                {dropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-20">
+                    <Link
+                      href="/profile"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                      Мой профиль
+                    </Link>
+                    <Link
+                      href="/login"
+                      className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">
+                      Выйти
+                    </Link>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </section>

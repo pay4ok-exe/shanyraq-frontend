@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react"; // Добавили useEffect
 import axiosInstance from "@/axiosInstance/axios"; // Импорт axiosInstance
+import { useRouter } from "next/navigation";
 
 import * as Images from "../../public/images";
 import WelcomeImage from "@/public/welcomeLanding.png";
@@ -17,8 +18,10 @@ import Link from "next/link";
 
 const LandingPage = () => {
   const [activeDesc, setActiveDesc] = useState(false);
-  const [cardData, setCardData] = useState([]); // Изменили на состояние
+  const [cardData, setCardData] = useState([]);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+
+  const router = useRouter();
 
   const toggleAccordion = () => setActiveDesc(!activeDesc);
 
@@ -28,19 +31,15 @@ const LandingPage = () => {
         const response = await axiosInstance.get("/announcement/great-deals");
         // Преобразуем данные из ответа в формат, ожидаемый компонентом Card
         const mappedData = response.data.map((item) => ({
-          id: item.id,
-          imageUrl:
-            item.photos && item.photos.length > 0
-              ? item.photos[0].url
-              : "default-image.svg", // Используем первую фотографию или изображение по умолчанию
+          id: item.announcementId,
+          image: item.image,
           title: item.title,
-          description: item.apartmentsInfo,
-          price: item.cost.toString(),
-          city: item.region,
-          gender: item.selectedGender,
-          bedrooms: item.quantityOfRooms,
-          people: item.numberOfPeopleAreYouAccommodating,
-          date: item.arriveDate, // Форматировать дату при необходимости
+          cost: item.cost,
+          address: item.address,
+          selectedGender: item.selectedGender,
+          roomCount: item.roomCount,
+          roommates: item.roommates,
+          arriveDate: item.arriveDate, // Форматировать дату при необходимости
         }));
         setCardData(mappedData);
       } catch (error) {
@@ -81,8 +80,7 @@ const LandingPage = () => {
           className="relative w-full h-[560px]"
           style={{
             backgroundImage: `url(${WelcomeImage.src})`,
-          }}
-        >
+          }}>
           <div className="mx-auto relative z-10 pt-[70px] flex flex-col items-center text-white text-center w-[910px]">
             <h1 className="font-circular text-[48px] font-bold leading-[60px] tracking-[-0.4px] text-center underline-from-font decoration-none">
               Найди идеального сожителя!
@@ -102,15 +100,13 @@ const LandingPage = () => {
             <div className="h-[40px] flex gap-[20px]">
               <button
                 className="w-[40px] h-full flex items-center justify-center rounded-[5px] bg-[#D6D6D6]"
-                onClick={handlePrev}
-              >
+                onClick={handlePrev}>
                 <Images.left />
               </button>
 
               <button
                 className="w-[40px] h-full flex items-center justify-center rounded-[5px] bg-[#32343A]"
-                onClick={handleNext}
-              >
+                onClick={handleNext}>
                 <Images.right />
               </button>
             </div>
@@ -118,13 +114,18 @@ const LandingPage = () => {
 
           <div
             ref={scrollContainerRef}
-            className="w-full overflow-x-auto hide-scrollbar flex gap-[27px] py-[10px]"
-          >
-            {cardData.map((card, index) => (
-              <Link href={`/announcement/${card.id}`} key={card.id}>
-                <Card card={card} isLast={cardData.length - 1 === index} />
-              </Link>
-            ))}
+            className="w-full overflow-x-auto hide-scrollbar flex gap-[27px] py-[10px]">
+            {cardData.map((card, index) => {
+              const isLast = cardData.length - 1 === index;
+
+              return isLast ? (
+                <Card key={card.id} card={card} isLast={isLast} />
+              ) : (
+                <Link href={`/announcement/${card.id}`} key={card.id}>
+                  <Card card={card} isLast={isLast} />
+                </Link>
+              );
+            })}
           </div>
         </div>
 
@@ -133,8 +134,7 @@ const LandingPage = () => {
             className="relative w-full h-[500px] rounded-[20px]"
             style={{
               backgroundImage: `url(${CtaImage.src})`,
-            }}
-          >
+            }}>
             <div className="mx-auto relative z-10 flex flex-col items-center justify-center text-white text-center h-full w-[910px] gap-[32px]">
               <div className="w-[360px] h-[5px] bg-white shadow-[0px_4px_10px_0px_#00000040]"></div>
 
@@ -146,8 +146,7 @@ const LandingPage = () => {
               </p>
               <button
                 style={{ boxShadow: "0px 4px 10px 0px rgba(0, 0, 0, 0.2)" }}
-                className="flex justify-center items-center gap-[5px] bg-[#FFFFFF] text-[#252525] font-bold px-[25px] py-[15px] rounded-[5px]"
-              >
+                className="flex justify-center items-center gap-[5px] bg-[#FFFFFF] text-[#252525] font-bold px-[25px] py-[15px] rounded-[5px]">
                 <span>Подать объявление</span>
                 <Images.ArrowRight color={"#252525"} />
               </button>
