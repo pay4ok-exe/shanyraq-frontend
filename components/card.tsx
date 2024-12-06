@@ -4,7 +4,7 @@ import * as Images from "../public/images";
 import { useEffect, useState } from "react";
 
 interface CardProps {
-  card: {
+  card?: {
     id: number;
     title: string;
     description: string;
@@ -16,7 +16,7 @@ interface CardProps {
     people: number;
     date: string;
   };
-  isLast: boolean;
+  isLast?: boolean;
 }
 
 const Card: React.FC<CardProps> = ({ card, isLast }) => {
