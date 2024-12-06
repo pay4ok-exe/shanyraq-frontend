@@ -749,7 +749,7 @@ function StepApartmentDetails({
       )}
 
       {/* Microdistrict Selection */}
-      {district && (
+      {district && microDistrictsData && microDistrictsData.length > 0 && (
         <div className="flex flex-col gap-[12px] w-full">
           <label className="block text-[16px] font-semibold leading-[20px] text-[#252525]">
             Микрорайон:

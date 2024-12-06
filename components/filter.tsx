@@ -51,7 +51,7 @@ const Filter = ({ onSubmit, initialQuery }) => {
     setAgeRange(newValue as [number, number]);
   };
 
-  const [longTerm, setLongTerm] = useState<boolean | null>(null);
+  const [longTerm, setLongTerm] = useState<boolean>(false);
 
   useEffect(() => {
     // Fetch regions data
@@ -224,6 +224,7 @@ const Filter = ({ onSubmit, initialQuery }) => {
       maxArea: roomSize[1] ? parseInt(roomSize[1]) : 0, // number
       notTheFirstFloor: isNotFirstFloor, // boolean
       notTheTopFloor: isNotLastFloor, // boolean
+      forALongTime: longTerm, // boolean
       arePetsAllowed: petsAllowed, // boolean
       isCommunalServiceIncluded: utilitiesIncluded, // boolean
       intendedForStudents: forStudents, // boolean
@@ -236,25 +237,26 @@ const Filter = ({ onSubmit, initialQuery }) => {
   const saveFilter = () => {
     // Construct the query object same as handleSubmit
     const queryObject = {
-      selectedGender: selectedGender,
-      region: region,
-      district: district,
-      microDistrict: microDistrict,
-      minPrice: priceRange[0],
-      maxPrice: priceRange[1],
-      numberOfPeopleAreYouAccommodating: parseInt(housemates),
-      quantityOfRooms: roommates,
-      minAge: ageRange[0],
-      maxAge: ageRange[1],
-      arriveData: moveInDate || "",
-      minArea: roomSize[0] ? parseInt(roomSize[0]) : 0,
-      maxArea: roomSize[1] ? parseInt(roomSize[1]) : 0,
-      notTheFirstFloor: isNotFirstFloor,
-      notTheTopFloor: isNotLastFloor,
-      arePetsAllowed: petsAllowed,
-      isCommunalServiceIncluded: utilitiesIncluded,
-      intendedForStudents: forStudents,
-      typeOfHousing: propertyType || "",
+      selectedGender: selectedGender, // "string"
+      region: region, // "string"
+      district: district, // "string"
+      microDistrict: microDistrict, // "string"
+      minPrice: priceRange[0], // number
+      maxPrice: priceRange[1], // number
+      numberOfPeopleAreYouAccommodating: housemates, // number
+      quantityOfRooms: roommates, // "string"
+      minAge: ageRange[0], // number
+      maxAge: ageRange[1], // number
+      arriveData: moveInDate || "", // "YYYY-MM-DD"
+      minArea: roomSize[0] ? parseInt(roomSize[0]) : 0, // number
+      maxArea: roomSize[1] ? parseInt(roomSize[1]) : 0, // number
+      notTheFirstFloor: isNotFirstFloor, // boolean
+      notTheTopFloor: isNotLastFloor, // boolean
+      forALongTime: longTerm, // boolean
+      arePetsAllowed: petsAllowed, // boolean
+      isCommunalServiceIncluded: utilitiesIncluded, // boolean
+      intendedForStudents: forStudents, // boolean
+      typeOfHousing: propertyType || "", // "string"
     };
 
     // Check if already saved
@@ -491,7 +493,7 @@ const Filter = ({ onSubmit, initialQuery }) => {
           )}
 
           {/* ZHK */}
-          <div className="flex flex-col w-full gap-[24px]">
+          {/* <div className="flex flex-col w-full gap-[24px]">
             <p className="text-[#252525] font-normal text-[14px] leading-[17.5px] text-left">
               Жилой комплекс
             </p>
@@ -505,7 +507,7 @@ const Filter = ({ onSubmit, initialQuery }) => {
                 className="w-full border-[1px] focus:text-[#252525] border-[#EBEBEB] rounded-[5px] px-[15px] py-[10px] text-left text-[14px] font-normal leading-[18px] outline-none focus:outline-none focus:border-[#1aa683] text-[#B5B7C0]"
               />
             </div>
-          </div>
+          </div> */}
 
           {/* Price */}
           <div className="flex flex-col w-full gap-[24px]">
@@ -635,12 +637,11 @@ const Filter = ({ onSubmit, initialQuery }) => {
           </div>
 
           {/* Long/Short Term */}
-          <div className="flex flex-col gap-[24px] w-full">
+          {/* <div className="flex flex-col gap-[24px] w-full">
             <p className="text-[#252525] font-normal text-[14px] leading-[17.5px] text-left">
               Продолжительность
             </p>
             <div className="flex gap-[16px]">
-              {/* Long Term */}
               <div
                 onClick={() => setLongTerm(true)}
                 className={`${
@@ -651,7 +652,6 @@ const Filter = ({ onSubmit, initialQuery }) => {
                 Долгосрочно
               </div>
 
-              {/* Short Term */}
               <div
                 onClick={() => setLongTerm(false)}
                 className={`${
@@ -662,7 +662,7 @@ const Filter = ({ onSubmit, initialQuery }) => {
                 Краткосрочно
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Move-in Date */}
           <div className="flex flex-col w-full gap-[24px]">
@@ -812,6 +812,14 @@ const Filter = ({ onSubmit, initialQuery }) => {
                   </label>
                 </div>
               </div>
+
+              {/* Long Term */}
+              <ToggleButton
+                label="На долгий срок?"
+                value={longTerm}
+                onChange={setLongTerm}
+                className="text-[#252525] font-normal text-[14px] leading-[17.5px] text-left"
+              />
 
               {/* Pets Allowed */}
               <ToggleButton
