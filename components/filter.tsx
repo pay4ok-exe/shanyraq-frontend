@@ -117,19 +117,23 @@ const Filter = ({ onSubmit, initialQuery }) => {
   const toggleGenderDropdown = () => {
     setIsGenderDropdownOpen((prev) => !prev);
   };
-  const formatDate = (date: string) => {
+  const formatDate = (date: string): string => {
     const parsedDate = new Date(date);
     if (isNaN(parsedDate.getTime())) {
-      return "";
+      // If the date is invalid, return the default value "2024-12-03"
+      return "2024-12-03";
     }
     return parsedDate.toISOString().split("T")[0]; // Formats as "YYYY-MM-DD"
   };
 
   const [moveInDate, setMoveInDate] = useState<string>(
-    initialQuery?.arriveDate || ""
+    initialQuery?.arriveDate
+      ? formatDate(initialQuery.arriveDate)
+      : "2024-12-03"
   );
+
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMoveInDate(e.target.value);
+    setMoveInDate(formatDate(e.target.value));
   };
 
   const [isToday, setIsToday] = useState(false);
@@ -215,7 +219,7 @@ const Filter = ({ onSubmit, initialQuery }) => {
       quantityOfRooms: roommates, // "string"
       minAge: ageRange[0], // number
       maxAge: ageRange[1], // number
-      arriveDate: moveInDate || "", // "YYYY-MM-DD"
+      arriveData: moveInDate || "", // "YYYY-MM-DD"
       minArea: roomSize[0] ? parseInt(roomSize[0]) : 0, // number
       maxArea: roomSize[1] ? parseInt(roomSize[1]) : 0, // number
       notTheFirstFloor: isNotFirstFloor, // boolean
@@ -242,7 +246,7 @@ const Filter = ({ onSubmit, initialQuery }) => {
       quantityOfRooms: roommates,
       minAge: ageRange[0],
       maxAge: ageRange[1],
-      arriveDate: moveInDate || "",
+      arriveData: moveInDate || "",
       minArea: roomSize[0] ? parseInt(roomSize[0]) : 0,
       maxArea: roomSize[1] ? parseInt(roomSize[1]) : 0,
       notTheFirstFloor: isNotFirstFloor,
@@ -267,7 +271,7 @@ const Filter = ({ onSubmit, initialQuery }) => {
 
   return (
     <aside
-      className="filter min-w-[450px] bg-white rounded-[10px] border-red-300 border overflow-y-auto scrollbar max-h-[90vh] sticky top-[30px]"
+      className="filter min-w-[450px] bg-white rounded-[10px] overflow-y-auto scrollbar max-h-[90vh] sticky top-[30px]"
       style={{
         boxShadow: "0px 4px 9px 0px #98A0B440",
       }}>

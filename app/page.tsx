@@ -10,11 +10,20 @@ import Link from "next/link";
 import Card from "@/components/card";
 import HomeCard from "@/components/home-card";
 
+const sortMapping = {
+  "Самые подходящие": 1,
+  "По возрастанию цены": 2,
+  "По новизне": 3,
+  "По убыванию цены": 4,
+};
+
 export default function Home() {
   const [query, setQuery] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [initialQuery, setInitialQuery] = useState(null);
   const [announcements, setAnnouncements] = useState([]);
+  const [selectedSort, setSelectedSort] = useState<string>("Самые подходящие");
+  const [isSortDropdownOpen, setIsSortDropdownOpen] = useState<boolean>(false);
 
   const handleFilterSubmit = (queryObject: any) => {
     // queryObject matches the swagger schema
@@ -42,7 +51,10 @@ export default function Home() {
   useEffect(() => {
     const fetchAllAnnouncements = async () => {
       try {
-        const response = await axiosInstance.get("/announcement/all");
+        const sortValue = sortMapping[selectedSort];
+        const response = await axiosInstance.get("/announcement/all", {
+          params: { sort: sortValue },
+        });
         // Assuming response.data is an array of announcements
         setAnnouncements(response.data || []);
       } catch (error: any) {
@@ -57,7 +69,7 @@ export default function Home() {
     };
 
     fetchAllAnnouncements();
-  }, []);
+  }, [selectedSort]);
 
   useEffect(() => {
     if (query) {
@@ -65,15 +77,9 @@ export default function Home() {
       // If your backend expects POST with JSON, use axiosInstance.post("/announcement/search", query)
       const fetchData = async () => {
         try {
-          const response = await axiosInstance.post(
-            "/announcement/filter",
-            query,  
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
+          const response = await axiosInstance.get("/announcement/filter", {
+            params: query,
+          });
           setAnnouncements(response.data || []);
           setErrorMessage("");
         } catch (error: any) {
@@ -91,6 +97,10 @@ export default function Home() {
     }
   }, [query]);
 
+  const toggleSortDropdown = () => {
+    setIsSortDropdownOpen(!isSortDropdownOpen);
+  };
+
   return (
     <div className="min-h-full min-w-full space-y-[40px]">
       <Header isFilterResults={false} />
@@ -101,11 +111,41 @@ export default function Home() {
           <Filter onSubmit={handleFilterSubmit} initialQuery={initialQuery} />
           <div className="flex flex-col w-full gap-[12px] ">
             <div className="flex justify-between items-center">
-              <div className="flex items-center gap-[12px]">
-                <p className="text-left text-[14px] font-normal leading-[18px] text-[#5c5c5c">
-                  Самые подходящие
-                </p>
-                <Images.arrowDown w={"20"} h={"20"} color={"#5c5c5c"} />
+              <div className="relative">
+                <div
+                  className="flex items-center gap-[12px] cursor-pointer"
+                  onClick={toggleSortDropdown}>
+                  <p className="text-left text-[14px] font-normal leading-[18px] text-[#5c5c5c">
+                    {selectedSort}
+                  </p>
+                  <Images.arrowDown w={"20"} h={"20"} color={"#5c5c5c"} />
+                </div>
+                {isSortDropdownOpen && (
+                  <div className="absolute top-[30px] left-[-10px] bg-white space-y-[12px] min-w-[200px] rounded-[5px] text-left z-10">
+                    <ul className="flex flex-col">
+                      {[
+                        "Самые подходящие",
+                        "По возрастанию цены",
+                        "По новизне",
+                        "По убыванию цены",
+                      ].map((sortOption) => (
+                        <li
+                          key={sortOption}
+                          onClick={() => {
+                            setSelectedSort(sortOption);
+                            setIsSortDropdownOpen(false);
+                          }}
+                          className={`${
+                            sortOption === selectedSort
+                              ? "bg-[#D1EDE6] text-[#1AA683]"
+                              : "bg-white text-[#252525]"
+                          } w-full px-[12px] py-[4px] rounded-[5px] cursor-pointer font-normal text-[14px] leading-[17.5px]`}>
+                          {sortOption}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
               <Images.map />
             </div>
