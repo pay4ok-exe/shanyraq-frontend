@@ -39,122 +39,57 @@ export default function Home() {
     }
   }, []);
 
-  const testAnnouncement = {
-    id: 1,
-    role: "Я житель",
-    title: "щызывзщыфода",
-    selectedGender: "Женщина",
-    doYouLiveInThisHouse: true,
-    howManyPeopleLiveInThisApartment: "3",
-    numberOfPeopleAreYouAccommodating: 3,
-    minAge: 18,
-    maxAge: 50,
-    region: "Алматы",
-    district: "Наурызбайский р-н",
-    microDistrict: "мкр Акжар",
-    address: "лыфвдлвалдфыова",
-    arriveDate: "2024-12-14",
-    cost: 50000,
-    quantityOfRooms: "1",
-    isDepositRequired: true,
-    deposit: 4999,
-    arePetsAllowed: false,
-    isCommunalServiceIncluded: true,
-    minAmountOfCommunalService: 0,
-    maxAmountOfCommunalService: 5000,
-    intendedForStudents: false,
-    areBadHabitsAllowed: false,
-    apartmentsInfo: "ospanakisajkdf",
-    typeOfHousing: "Дом",
-    numberOfFloor: 1,
-    maxFloorInTheBuilding: 1,
-    areaOfTheApartment: 3,
-    forALongTime: true,
-    phoneNumber: null,
-    preferences: ["Чистоплотная/ный", "Порядочная/ный", "Религиозная/ный"],
-    coordsX: "43.192468",
-    coordsY: "76.79926",
-    photos: [
-      {
-        id: 1,
-        url: "https://findroommate.s3.eu-north-1.amazonaws.com/1733420617955_Ava.jpg",
-      },
-      {
-        id: 2,
-        url: "https://findroommate.s3.eu-north-1.amazonaws.com/1733420618851_lupy.jpg",
-      },
-      {
-        id: 3,
-        url: "https://findroommate.s3.eu-north-1.amazonaws.com/1733420619222_my-photo.jpg",
-      },
-      {
-        id: 4,
-        url: "https://findroommate.s3.eu-north-1.amazonaws.com/1733420619910_usopp.jpg",
-      },
-      {
-        id: 5,
-        url: "https://findroommate.s3.eu-north-1.amazonaws.com/1733420620296_Wallpaper.png",
-      },
-    ],
-    user: {
-      firstName: "Ospan",
-      lastName: "Akim",
-      email: "ospanakim05@gmail.com",
-      profilePhoto: null,
-    },
-  };
-
-  // Create an array of 10 identical announcements for testing
   useEffect(() => {
-    const duplicatedAnnouncements = Array(9).fill(testAnnouncement);
-    setAnnouncements(duplicatedAnnouncements);
+    const fetchAllAnnouncements = async () => {
+      try {
+        const response = await axiosInstance.get("/announcement/all");
+        // Assuming response.data is an array of announcements
+        setAnnouncements(response.data || []);
+      } catch (error: any) {
+        console.error(
+          "Error fetching announcements:",
+          error.response?.data?.message || error.message
+        );
+        setErrorMessage(
+          error.response?.data?.message || "Failed to fetch announcements"
+        );
+      }
+    };
+
+    fetchAllAnnouncements();
   }, []);
 
-  // useEffect(() => {
-  //   const fetchAllAnnouncements = async () => {
-  //     try {
-  //       const response = await axiosInstance.get("/announcement/all");
-  //       // Assuming response.data is an array of announcements
-  //       setAnnouncements(response.data || []);
-  //     } catch (error: any) {
-  //       console.error(
-  //         "Error fetching announcements:",
-  //         error.response?.data?.message || error.message
-  //       );
-  //       setErrorMessage(
-  //         error.response?.data?.message || "Failed to fetch announcements"
-  //       );
-  //     }
-  //   };
+  useEffect(() => {
+    if (query) {
+      // Example GET request using query parameters
+      // If your backend expects POST with JSON, use axiosInstance.post("/announcement/search", query)
+      const fetchData = async () => {
+        try {
+          const response = await axiosInstance.post(
+            "/announcement/filter",
+            query,  
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          setAnnouncements(response.data || []);
+          setErrorMessage("");
+        } catch (error: any) {
+          console.error(
+            "Error fetching announcements:",
+            error.response?.data?.message || error.message
+          );
+          setErrorMessage(
+            error.response?.data?.message || "Failed to fetch announcements"
+          );
+        }
+      };
 
-  //   fetchAllAnnouncements();
-  // }, []);
-
-  // useEffect(() => {
-  //   if (query) {
-  //     // Example GET request using query parameters
-  //     // If your backend expects POST with JSON, use axiosInstance.post("/announcement/search", query)
-  //     const fetchData = async () => {
-  //       try {
-  //         const response = await axiosInstance.get("/announcement/search", {
-  //           params: query,
-  //         });
-  //         setResults(response.data);
-  //         setErrorMessage("");
-  //       } catch (error: any) {
-  //         console.error(
-  //           "Error fetching announcements:",
-  //           error.response?.data?.message || error.message
-  //         );
-  //         setErrorMessage(
-  //           error.response?.data?.message || "Failed to fetch announcements"
-  //         );
-  //       }
-  //     };
-
-  //     fetchData();
-  //   }
-  // }, [query]);
+      fetchData();
+    }
+  }, [query]);
 
   return (
     <div className="min-h-full min-w-full space-y-[40px]">
@@ -178,18 +113,11 @@ export default function Home() {
               {announcements && announcements.length > 0 && (
                 <div className="grid grid-cols-3 gap-4">
                   {announcements.map((announcement: any, index: number) => (
-                    // <Link
-                    //   href={`/announcement/${announcement.id}`}
-                    //   key={announcement.id + Math.random()}>
-                    //   <HomeCard
-                    //     card={announcement}
-                    //     // isLast={announcements.length - 1 === index}
-                    //   />
-                    // </Link>
-                    <HomeCard
-                      card={announcement}
-                      key={announcement.id + Math.random()}
-                    />
+                    <Link
+                      href={`/announcement/${announcement.announcementId}`}
+                      key={announcement.announcementId}>
+                      <HomeCard card={announcement} />
+                    </Link>
                   ))}
                 </div>
               )}

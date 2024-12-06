@@ -5,16 +5,15 @@ import { useEffect, useState } from "react";
 
 interface HomeCardProps {
   card?: {
-    id: number;
+    announcementId: number;
     title: string;
-    description: string;
-    price: string;
-    imageUrl: string;
-    city: string;
-    gender: string;
-    bedrooms: number;
-    people: number;
-    date: string;
+    cost: string;
+    image: string;
+    address: string;
+    roomCount: number;
+    roommates: number;
+    arriveDate: string;
+    selectedGender: string;
   };
 }
 
@@ -26,8 +25,8 @@ const HomeCard: React.FC<HomeCardProps> = ({ card }) => {
         style={{ boxShadow: "0px 4px 10px 0px rgba(0, 0, 0, 0.2)" }}>
         <div className="relative">
           <Image
-            src={card.photos[0].url}
-            alt={card.title}
+            src={card.image}
+            alt={card.image}
             className="rounded-[10px] object-cover max-w-[240px] max-h-[130px]"
             width={343}
             height={220}
@@ -46,7 +45,7 @@ const HomeCard: React.FC<HomeCardProps> = ({ card }) => {
             <span className="flex ">
               <Images.Location w={"16"} h={"16"} color={"#929292"} />
               <p className="text-[14px] font-[400] text-[#929292]  text-left">
-                {card.region}
+                {card.address}
               </p>
             </span>
           </div>
@@ -62,7 +61,7 @@ const HomeCard: React.FC<HomeCardProps> = ({ card }) => {
             <div className="flex flex-col items-center gap-[4px]">
               <Images.apartment h={"14"} w={"14"} />
               <p className="text-[12px] font-normal text-[#929292] leading-[17.5px] text-center">
-                {card.quantityOfRooms + " комната"}
+                {card.roomCount + " комната"}
               </p>
             </div>
 
@@ -76,7 +75,7 @@ const HomeCard: React.FC<HomeCardProps> = ({ card }) => {
             <div className="flex flex-col items-center gap-[4px]">
               <Images.people h={"14"} w={"14"} />
               <p className="text-[12px] font-normal text-[#929292] leading-[17.5px] text-center">
-                {card.numberOfPeopleAreYouAccommodating}
+                {card.roommates}
               </p>
             </div>
           </div>
