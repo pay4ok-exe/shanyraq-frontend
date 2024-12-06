@@ -5,13 +5,17 @@ import Slider from "@mui/material/Slider";
 import * as Images from "@/public/images"; // Import images
 import ToggleButton from "@/components/toggle";
 
-const Filter = () => {
-  const [selectedGender, setSelectedGender] = useState("Любой"); // Store selected gender
+const Filter = ({ onSubmit, initialQuery }) => {
+  const [selectedGender, setSelectedGender] = useState(
+    initialQuery?.selectedGender || "Любой"
+  ); // Store selected gender
   const [isGenderDropdownOpen, setIsGenderDropdownOpen] = useState(false); // Manage dropdown visibility
 
-  const [region, setRegion] = useState("");
-  const [district, setDistrict] = useState("");
-  const [microDistrict, setMicroDistrict] = useState("");
+  const [region, setRegion] = useState(initialQuery?.region || "");
+  const [district, setDistrict] = useState(initialQuery?.district || "");
+  const [microDistrict, setMicroDistrict] = useState(
+    initialQuery?.microDistrict || ""
+  );
 
   const [regionsData, setRegionsData] = useState([]); // Fetch or import region data
   const [districtsData, setDistrictsData] = useState([]); // Fetch or import district data
@@ -24,17 +28,25 @@ const Filter = () => {
 
   const [zhk, setZhk] = useState("");
 
-  const [priceRange, setPriceRange] = useState([0, 500000]);
+  const [priceRange, setPriceRange] = useState(
+    initialQuery ? [initialQuery.minPrice, initialQuery.maxPrice] : [0, 500000]
+  );
   const handleSliderChange = (event: any, newValue: number | number[]) => {
     setPriceRange(newValue as number[]); // Update price range when slider is changed
   };
 
-  const [housemates, setHousemates] = useState("1");
+  const [housemates, setHousemates] = useState(
+    initialQuery?.numberOfPeopleAreYouAccommodating?.toString() || "1"
+  );
   const housematesCount = ["1", "2", "3", "4", "5+"];
 
-  const [roommates, setRoommates] = useState(1);
+  const [roommates, setRoommates] = useState(
+    initialQuery?.quantityOfRooms || 1
+  );
 
-  const [ageRange, setAgeRange] = useState([18, 50]);
+  const [ageRange, setAgeRange] = useState(
+    initialQuery ? [initialQuery.minAge, initialQuery.maxAge] : [18, 50]
+  );
   const handleAgeRangeChange = (event: any, newValue: number | number[]) => {
     setAgeRange(newValue as [number, number]);
   };
@@ -42,10 +54,28 @@ const Filter = () => {
   const [longTerm, setLongTerm] = useState<boolean | null>(null);
 
   useEffect(() => {
-    // Example: Fetching regions data or importing static data
+    // Fetch regions data
     const fetchedRegions = ALL_ADDRESSES;
     setRegionsData(fetchedRegions);
-  }, []);
+
+    // If initialQuery is provided and region/district/microdistrict are set,
+    // pre-load the dependent dropdowns
+    if (initialQuery?.region) {
+      const selectedRegion = fetchedRegions.find(
+        (r: any) => r.name === initialQuery.region
+      );
+      setDistrictsData(selectedRegion ? selectedRegion.children : []);
+
+      if (initialQuery?.district) {
+        const selectedDistrict = selectedRegion?.children?.find(
+          (d: any) => d.name === initialQuery.district
+        );
+        setMicroDistrictsData(
+          selectedDistrict ? selectedDistrict.children : []
+        );
+      }
+    }
+  }, [initialQuery]);
 
   const handleRegionSelect = (regionName: string) => {
     setRegion(regionName);
@@ -95,7 +125,9 @@ const Filter = () => {
     return parsedDate.toISOString().split("T")[0]; // Formats as "YYYY-MM-DD"
   };
 
-  const [moveInDate, setMoveInDate] = useState<string>(formatDate(""));
+  const [moveInDate, setMoveInDate] = useState<string>(
+    initialQuery?.arriveDate || ""
+  );
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMoveInDate(e.target.value);
   };
@@ -123,7 +155,10 @@ const Filter = () => {
     }
   };
 
-  const [roomSize, setRoomSize] = useState(["", ""]);
+  const [roomSize, setRoomSize] = useState([
+    initialQuery?.minArea?.toString() || "",
+    initialQuery?.maxArea?.toString() || "",
+  ]);
 
   const handleRoomSizeChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -135,8 +170,12 @@ const Filter = () => {
   };
 
   const [floors, setFloors] = useState(["", ""]);
-  const [isNotFirstFloor, setIsNotFirstFloor] = useState(false);
-  const [isNotLastFloor, setIsNotLastFloor] = useState(false);
+  const [isNotFirstFloor, setIsNotFirstFloor] = useState(
+    initialQuery?.notTheFirstFloor || false
+  );
+  const [isNotLastFloor, setIsNotLastFloor] = useState(
+    initialQuery?.notTheTopFloor || false
+  );
 
   const handleFloorChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -147,24 +186,92 @@ const Filter = () => {
     setFloors(newFloor);
   };
 
-  const [petsAllowed, setPetsAllowed] = useState(false);
-  const [utilitiesIncluded, setUtilitiesIncluded] = useState(false);
-  const [forStudents, setForStudents] = useState(false);
+  const [petsAllowed, setPetsAllowed] = useState(
+    initialQuery?.arePetsAllowed || false
+  );
+  const [utilitiesIncluded, setUtilitiesIncluded] = useState(
+    initialQuery?.isCommunalServiceIncluded || false
+  );
+  const [forStudents, setForStudents] = useState(
+    initialQuery?.intendedForStudents || false
+  );
   const [badHabitsAllowed, setBadHabitsAllowed] = useState(false);
 
-  const [propertyType, setPropertyType] = useState("");
+  const [propertyType, setPropertyType] = useState(
+    initialQuery?.typeOfHousing || ""
+  );
 
   const [moreFilters, setMoreFilters] = useState(false);
 
-  const handleSubmit = () => {};
+  const handleSubmit = () => {
+    const queryObject = {
+      selectedGender: selectedGender, // "string"
+      region: region, // "string"
+      district: district, // "string"
+      microDistrict: microDistrict, // "string"
+      minPrice: priceRange[0], // number
+      maxPrice: priceRange[1], // number
+      numberOfPeopleAreYouAccommodating: housemates, // number
+      quantityOfRooms: roommates, // "string"
+      minAge: ageRange[0], // number
+      maxAge: ageRange[1], // number
+      arriveDate: moveInDate || "", // "YYYY-MM-DD"
+      minArea: roomSize[0] ? parseInt(roomSize[0]) : 0, // number
+      maxArea: roomSize[1] ? parseInt(roomSize[1]) : 0, // number
+      notTheFirstFloor: isNotFirstFloor, // boolean
+      notTheTopFloor: isNotLastFloor, // boolean
+      arePetsAllowed: petsAllowed, // boolean
+      isCommunalServiceIncluded: utilitiesIncluded, // boolean
+      intendedForStudents: forStudents, // boolean
+      typeOfHousing: propertyType || "", // "string"
+    };
+
+    onSubmit(queryObject);
+  };
+
+  const saveFilter = () => {
+    // Construct the query object same as handleSubmit
+    const queryObject = {
+      selectedGender: selectedGender,
+      region: region,
+      district: district,
+      microDistrict: microDistrict,
+      minPrice: priceRange[0],
+      maxPrice: priceRange[1],
+      numberOfPeopleAreYouAccommodating: parseInt(housemates),
+      quantityOfRooms: roommates,
+      minAge: ageRange[0],
+      maxAge: ageRange[1],
+      arriveDate: moveInDate || "",
+      minArea: roomSize[0] ? parseInt(roomSize[0]) : 0,
+      maxArea: roomSize[1] ? parseInt(roomSize[1]) : 0,
+      notTheFirstFloor: isNotFirstFloor,
+      notTheTopFloor: isNotLastFloor,
+      arePetsAllowed: petsAllowed,
+      isCommunalServiceIncluded: utilitiesIncluded,
+      intendedForStudents: forStudents,
+      typeOfHousing: propertyType || "",
+    };
+
+    // Check if already saved
+    if (sessionStorage.getItem("savedFilter")) {
+      alert(
+        "Фильтр уже был сохранен ранее. Перезагрузите страницу или очистите, чтобы сохранить заново."
+      );
+      return;
+    }
+
+    sessionStorage.setItem("savedFilter", JSON.stringify(queryObject));
+    alert("Поиск сохранен!");
+  };
 
   return (
     <aside
-      className="filter min-w-[450px] bg-white rounded-[10px] border-red-300 border"
+      className="filter min-w-[450px] bg-white rounded-[10px] border-red-300 border overflow-y-auto scrollbar max-h-[90vh] sticky top-[30px]"
       style={{
         boxShadow: "0px 4px 9px 0px #98A0B440",
       }}>
-      <div className="py-[32px] pl-[16px] pr-[34px] flex flex-col w-full">
+      <div className="py-[32px] pl-[16px] pr-[34px] flex flex-col w-full ">
         <div className="flex items-center justify-between w-full">
           <p className="text-[24px] font-semibold leading-[30px] text-[#252525]">
             Фильтр
@@ -555,7 +662,7 @@ const Filter = () => {
 
           {/* Move-in Date */}
           <div className="flex flex-col w-full gap-[24px]">
-            <p className="text-[#252525] flex items-center gap-[20px] font-normal text-[14px] leading-[17.5px] text-left">
+            <div className="text-[#252525] flex items-center gap-[20px] font-normal text-[14px] leading-[17.5px] text-left">
               Дата начала заселения
               <div className="flex gap-[16px]">
                 {/* Today */}
@@ -598,7 +705,7 @@ const Filter = () => {
                   Завтра
                 </label>
               </div>
-            </p>
+            </div>
 
             <div className="relative">
               <input
@@ -736,7 +843,7 @@ const Filter = () => {
 
               {/* Property Type */}
               <div className="flex flex-col w-full gap-[24px]">
-                <p className="w-full text-[#252525] flex items-center gap-[20px] font-normal text-[14px] leading-[17.5px] text-left">
+                <div className="w-full text-[#252525] flex items-center gap-[20px] font-normal text-[14px] leading-[17.5px] text-left">
                   Тип жилья?
                   <div className="ml-[100px] flex gap-[16px]">
                     <label
@@ -781,7 +888,7 @@ const Filter = () => {
                       Дом
                     </label>
                   </div>
-                </p>
+                </div>
               </div>
             </>
           )}
@@ -795,13 +902,14 @@ const Filter = () => {
             <Images.filter />
           </button>
           <button
-            //   onClick={handleBack}
+            onClick={saveFilter}
             className="w-1/2 flex items-center justify-center gap-[10px] py-[10px] text-[14px] font-semibold text-[#252525] border-[1px] border-[#252525] rounded-lg hover:bg-gray-100">
             <span>Сохранить поиск</span>
             <Images.search color="black" />
           </button>
         </div>
         <button
+          type="button"
           onClick={handleSubmit}
           className={`mt-[24px] py-[15px] text-[16px] font-semibold leading-[20px] tracking-[0.2px] rounded-[5px] bg-[#32343A] text-[#FFFFFF]`}>
           Найти
