@@ -606,9 +606,6 @@ function StepApartmentDetails({
       address.trim() &&
       region &&
       district &&
-      microDistrict &&
-      microDistrictsData &&
-      microDistrictsData.length > 0 &&
       moveInDate &&
       monthlyPayment &&
       (deposit ? depositAmount !== 0 : true)
@@ -625,7 +622,6 @@ function StepApartmentDetails({
     address,
     region,
     district,
-    microDistrict,
     moveInDate,
     monthlyPayment,
     deposit,
