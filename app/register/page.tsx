@@ -29,54 +29,46 @@ const RegisterPage = () => {
     }
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Reset errors
-    setError([]);
-
-    // Проверка на совпадение паролей
-    if (password !== confirmPassword) {
-      setError((prevErrors) => [
-        ...prevErrors,
-        "Пароли не совпадают. Пожалуйста, убедитесь, что оба пароля одинаковы.",
-      ]);
-      return;
-    }
-
     try {
-      const response = await axiosInstance.post("/auth/signup", {
-        firstName: firstname,
-        lastName: lastname,
-        email,
-        password, // Send password only if they match
+      const { newPassword, confirmPassword } = passwordData;
+      if (newPassword !== confirmPassword) {
+        alert("Пароли не совпадают!");
+        return;
+      }
+      const response = await axiosInstance.post("/profile/add-password", {
+        password: newPassword,
       });
 
-      // Redirect to email verification page
-      router.push("/register/verify-email");
-      localStorage.setItem("email", email);
+      console.log("Password changed successfully", response);
+      fetchProfile();
+
+      closeModal();
     } catch (error: any) {
-      console.log(error);
-      console.error("Register failed:", error.response?.data);
-
-      // Assuming the backend returns errors as a string or object
-      const errorMessage = error.response?.data;
-
-      // Handle if the error message is a single error (not an array of errors)
-      if (typeof errorMessage === "string" && errorMessage.includes(";")) {
-        const errorList = errorMessage.split(";").map((err) => err.trim());
-        console.log(errorList);
-        setError(errorList);
-      } else if (typeof errorMessage === "string") {
-        // If there is only one error, just show it
-        setError((prevErrors) => [...prevErrors, errorMessage]);
-      } else {
-        setError((prevErrors) => [
-          ...prevErrors,
-          "Неизвестная ошибка, пожалуйста, попробуйте снова.",
-        ]);
-      }
+      console.error(
+        "Entered incorrect password :",
+        error.response?.data?.message || error.message
+      );
+      alert(error.response?.data?.message || "Entered incorrect password!");
     }
+    // Passwords match, handle updating formData or actual logic here
+  };
+
+  const handleGoogle = () => {
+    const googleAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth";
+    const params = new URLSearchParams({
+      client_id:
+        "52521307160-9m20iauc3sfq2390f047p2jadddbo1rr.apps.googleusercontent.com",
+      redirect_uri: "http://localhost:3000/google",
+      response_type: "code",
+      scope: "openid email",
+    });
+
+    // Перенаправляем на страницу авторизации Google
+    window.location.href = `${googleAuthUrl}?${params.toString()}`;
+
+    // router.push("/login");
   };
 
   return (
@@ -282,7 +274,7 @@ const RegisterPage = () => {
                 <hr className="border-gray-300 flex-grow" />
               </div>
               <button
-                onClick={() => router.push("/login")}
+                onClick={handleGoogle}
                 className="w-full flex items-center justify-center text-[20px] gap-2 border py-[10px] rounded-lg hover:bg-gray-100 transition">
                 Войдите с помощью <span className="font-bold">Google</span>
                 <Image.GoogleIcon className="w-[20px] h-[20px]" />

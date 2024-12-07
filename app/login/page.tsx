@@ -78,6 +78,37 @@ const LoginPage = () => {
     // Обновляем состояние аутентификации
   };
 
+  const handleGoogle = () => {
+    const googleAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth";
+    const params = new URLSearchParams({
+      client_id:
+        "52521307160-9m20iauc3sfq2390f047p2jadddbo1rr.apps.googleusercontent.com",
+      redirect_uri: "http://localhost:3000/google",
+      response_type: "code",
+      scope: "openid email",
+    });
+
+    // Перенаправляем на страницу авторизации Google
+    window.location.href = `${googleAuthUrl}?${params.toString()}`;
+
+    // router.push("/login");
+  };
+
+  useEffect(() => {
+    // Check if token exists in the URL (this happens after Google redirects back)
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get("token");
+
+    if (token) {
+      // Store token in localStorage
+      localStorage.setItem("token", token);
+      setIsAuth(true);
+
+      // Redirect user to the home page or dashboard after successful login
+      router.push("/");
+    }
+  }, [router]);
+
   return (
     <div className="min-h-full min-w-full space-y-[90px]">
       <Header isFilterResults={false} />
@@ -215,7 +246,7 @@ const LoginPage = () => {
               </div>
               <button
                 className="w-full flex items-center justify-center text-[20px] gap-2 border py-[10px] rounded-lg hover:bg-gray-100 transition"
-                onClick={() => router.push("/login")}>
+                onClick={handleGoogle}>
                 Войдите с помощью <span className="font-bold">Google</span>
                 <Image.GoogleIcon className="w-[20px] h-[20px]" />
               </button>
