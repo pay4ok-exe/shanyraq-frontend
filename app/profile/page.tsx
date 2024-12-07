@@ -104,6 +104,7 @@ export default function ProfilesPage() {
         photo: data.profilePhoto || "",
         hasPassword: data.isPasswordHas || false,
       }));
+      
       if (!data.isPasswordHas) openModal();
     } catch (error: any) {
       console.error("Failed to fetch profile:", error?.response?.data || error);
