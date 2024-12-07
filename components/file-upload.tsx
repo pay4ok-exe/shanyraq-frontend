@@ -93,15 +93,14 @@ export const FileUpload = ({
         onDrop={handleDrop}
         className={`${
           fileEnter ? "border-4" : "border-2"
-        } mx-auto bg-white flex flex-col w-full h-72 border-dashed items-center justify-center transition-border duration-300`}
-      >
+        } mx-auto bg-white flex flex-col w-full h-72 border-dashed items-center justify-center transition-border duration-300`}>
         <label
           htmlFor="file"
-          className="h-full w-[200px] flex flex-col justify-center text-center items-center gap-[15px] cursor-pointer"
-        >
+          className="h-full w-[200px] flex flex-col justify-center text-center items-center gap-[15px] cursor-pointer">
           <Images.upload />
           <span className="text-[14px] font-normal text-[#252525]">
-            <span className="text-[#1AA683]">Нажмите</span>, чтобы загрузить, или перетащите.
+            <span className="text-[#1AA683]">Нажмите</span>, чтобы загрузить,
+            или перетащите.
           </span>
           <span className="text-[14px] font-normal text-[#B5B7C0]">
             Минимум количество 5
@@ -123,9 +122,7 @@ export const FileUpload = ({
       )}
 
       {/* Сообщение об ошибке */}
-      {error && (
-        <div className="mt-4 text-center text-red-500">{error}</div>
-      )}
+      {error && <div className="mt-4 text-center text-red-500">{error}</div>}
 
       {/* Отображение загруженных изображений */}
       {photos.length > 0 && (
@@ -134,8 +131,7 @@ export const FileUpload = ({
             <h3 className="text-lg font-semibold">Uploaded Photos</h3>
             <button
               onClick={handleReset}
-              className="text-sm text-red-500 hover:underline"
-            >
+              className="text-sm text-red-500 hover:underline">
               Reset
             </button>
           </div>
@@ -150,8 +146,7 @@ export const FileUpload = ({
                 {/* Кнопка удаления */}
                 <button
                   onClick={() => handleDelete(index)}
-                  className="absolute top-2 right-2 bg-red-500 text-white px-2 rounded-full hover:bg-red-600"
-                >
+                  className="absolute top-2 right-2 bg-red-500 text-white px-2 rounded-full hover:bg-red-600">
                   &times;
                 </button>
               </div>

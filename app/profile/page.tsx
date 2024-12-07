@@ -11,6 +11,8 @@ import MyAnnouncements from "@/components/my-announcements";
 import MenuItem from "@/components/ui/MenuItem";
 import axiosInstance from "@/axiosInstance/axios";
 import { useRouter } from "next/navigation";
+import { ProfilePhotoModal } from "@/components/profile-photo-modal";
+import { FileUpload } from "@/components/file-upload";
 
 export default function ProfilesPage() {
   const router = useRouter();
@@ -104,21 +106,67 @@ export default function ProfilesPage() {
         photo: data.profilePhoto || "",
         hasPassword: data.isPasswordHas || false,
       }));
-      
+
       if (!data.isPasswordHas) openModal();
+      // setValue(calculateProfileProgress(formData));
     } catch (error: any) {
       console.error("Failed to fetch profile:", error?.response?.data || error);
     }
   };
+  useEffect(() => {
+    setValue(calculateProfileProgress(formData));
+  }, [formData]);
 
   useEffect(() => {
-    // Fetch profile data when the component mounts
-
     fetchProfile();
   }, []);
 
   const [activeItem, setActiveItem] = useState("profile");
-  const [value, setValue] = useState(20);
+  const [value, setValue] = useState(0);
+  const calculateProfileProgress = (profile: any) => {
+    console.log("Calculating profile progress with data:", profile); // Debug log
+    const weights = {
+      firstName: 15,
+      lastName: 15,
+      email: 20,
+      gender: 10,
+      birthDate: 5,
+      phone: 5,
+      photo: 10,
+      hasPassword: 20,
+    };
+
+    let progress = 0;
+
+    if (profile.firstName && profile.firstName.trim() !== "")
+      progress += weights.firstName;
+    if (profile.lastName && profile.lastName.trim() !== "")
+      progress += weights.lastName;
+    if (profile.email && profile.email.trim() !== "") progress += weights.email;
+    if (profile.gender !== "Любой") progress += weights.gender;
+    if (profile.birthDate && profile.birthDate.trim() !== "")
+      progress += weights.birthDate;
+    if (profile.phone && profile.phone.trim() !== "") progress += weights.phone;
+    if (profile.photo && profile.photo.trim() !== "") progress += weights.photo;
+    if (profile.hasPassword) progress += weights.hasPassword;
+
+    console.log("Calculated progress:", progress); // Debug log
+
+    return Math.min(progress, 100);
+  };
+
+  const [isPhotoModalShow, setIsPhotoModalShow] = useState(false);
+  // const [photos, setPhotos] = useState<string[]>([]);
+  const [photos, setPhotos] = useState([]);
+
+  // Photo Modal Logic
+  const openPhotoModal = () => {
+    setIsPhotoModalShow(true);
+  };
+
+  const closePhotoModal = () => {
+    setIsPhotoModalShow(false);
+  };
 
   return (
     <div className="min-h-screen flex flex-col gap-[35px]">
@@ -130,24 +178,24 @@ export default function ProfilesPage() {
             <div className="flex justify-center mt-[30px]">
               <div className="w-[130px] h-[130px] rounded-full overflow-hidden relative">
                 {formData.photo ? (
-                  <Image
+                  <img
                     src={formData.photo}
                     alt="User Photo"
-                    width={130}
-                    height={130}
-                    className="object-cover"
+                    className="w-auto h-[130px] object-cover"
                   />
                 ) : (
                   <Images.userPhoto h={"130"} w={"130"} />
                 )}
-                <button className="absolute bottom-[20px] right-[10px] bg-[#252525] p-[5px] rounded-full text-white shadow-lg ">
+                <button
+                  onClick={openPhotoModal}
+                  className="absolute bottom-[20px] right-[10px] bg-[#252525] p-[5px] rounded-full text-white shadow-lg ">
                   <Images.userPhotoEdit />
                 </button>
               </div>
             </div>
             <div className="flex justify-center mt-5 mb-20">
               <p className="font-circular font-medium text-[#252525] leading-[20px] tracking-[0.2px] text-left">
-                {`${formData.firstName || "user"}  ${formData.lastName || ""}`}
+                {`${formData.firstName || "user"}`}
               </p>
             </div>
             <nav className="space-y-7">
@@ -200,7 +248,11 @@ export default function ProfilesPage() {
 
           {/* Profile Form */}
           {activeItem === "profile" && (
-            <ProfilePage formData={formData} setFormData={setFormData} fetchProfile={fetchProfile} />
+            <ProfilePage
+              formData={formData}
+              setFormData={setFormData}
+              fetchProfile={fetchProfile}
+            />
           )}
 
           {activeItem === "responses" && (
@@ -328,6 +380,12 @@ export default function ProfilesPage() {
           </form>
         </div>
       )}
+
+      <ProfilePhotoModal
+        isPhotoModalShow={isPhotoModalShow}
+        closePhotoModal={closePhotoModal}
+        setFormData={setFormData}
+      />
 
       <Footer />
     </div>

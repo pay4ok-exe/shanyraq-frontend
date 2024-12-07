@@ -29,30 +29,54 @@ const RegisterPage = () => {
     }
   }, []);
 
-  const handlePasswordSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Reset errors
+    setError([]);
+
+    // Проверка на совпадение паролей
+    if (password !== confirmPassword) {
+      setError((prevErrors) => [
+        ...prevErrors,
+        "Пароли не совпадают. Пожалуйста, убедитесь, что оба пароля одинаковы.",
+      ]);
+      return;
+    }
+
     try {
-      const { newPassword, confirmPassword } = passwordData;
-      if (newPassword !== confirmPassword) {
-        alert("Пароли не совпадают!");
-        return;
-      }
-      const response = await axiosInstance.post("/profile/add-password", {
-        password: newPassword,
+      const response = await axiosInstance.post("/auth/signup", {
+        firstName: firstname,
+        lastName: lastname,
+        email,
+        password, // Send password only if they match
       });
 
-      console.log("Password changed successfully", response);
-      fetchProfile();
-
-      closeModal();
+      // Redirect to email verification page
+      router.push("/register/verify-email");
+      localStorage.setItem("email", email);
     } catch (error: any) {
-      console.error(
-        "Entered incorrect password :",
-        error.response?.data?.message || error.message
-      );
-      alert(error.response?.data?.message || "Entered incorrect password!");
+      console.log(error);
+      console.error("Register failed:", error.response?.data);
+
+      // Assuming the backend returns errors as a string or object
+      const errorMessage = error.response?.data;
+
+      // Handle if the error message is a single error (not an array of errors)
+      if (typeof errorMessage === "string" && errorMessage.includes(";")) {
+        const errorList = errorMessage.split(";").map((err) => err.trim());
+        console.log(errorList);
+        setError(errorList);
+      } else if (typeof errorMessage === "string") {
+        // If there is only one error, just show it
+        setError((prevErrors) => [...prevErrors, errorMessage]);
+      } else {
+        setError((prevErrors) => [
+          ...prevErrors,
+          "Неизвестная ошибка, пожалуйста, попробуйте снова.",
+        ]);
+      }
     }
-    // Passwords match, handle updating formData or actual logic here
   };
 
   const handleGoogle = () => {

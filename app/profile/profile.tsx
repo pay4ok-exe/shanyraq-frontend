@@ -110,7 +110,8 @@ export default function ProfilePage({ formData, setFormData, fetchProfile }) {
   });
 
   useEffect(() => {
-    setProfileDatas(() => ({    
+    // fetchProfile();
+    setProfileDatas(() => ({
       firstName: formData.firstName || "",
       lastName: formData.lastName || "",
       phone: formData.phone || "",
