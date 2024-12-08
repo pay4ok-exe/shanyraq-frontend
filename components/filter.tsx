@@ -161,7 +161,7 @@ const Filter = ({ onSubmit, initialQuery }) => {
 
   const [roomSize, setRoomSize] = useState([
     initialQuery?.minArea?.toString() || "",
-    initialQuery?.maxArea?.toString() || "",
+    initialQuery?.maxArea?.toString() || "500",
   ]);
 
   const handleRoomSizeChange = (
@@ -221,7 +221,7 @@ const Filter = ({ onSubmit, initialQuery }) => {
       maxAge: ageRange[1], // number
       arriveData: moveInDate || "", // "YYYY-MM-DD"
       minArea: roomSize[0] ? parseInt(roomSize[0]) : 0, // number
-      maxArea: roomSize[1] ? parseInt(roomSize[1]) : 0, // number
+      maxArea: roomSize[1] ? parseInt(roomSize[1]) : 500, // number
       notTheFirstFloor: isNotFirstFloor, // boolean
       notTheTopFloor: isNotLastFloor, // boolean
       forALongTime: longTerm, // boolean
@@ -273,7 +273,7 @@ const Filter = ({ onSubmit, initialQuery }) => {
 
   return (
     <aside
-      className="filter max-w-[450px] bg-white rounded-[10px] overflow-y-auto scrollbar max-h-[90vh] sticky top-[30px]"
+      className="filter min-w-[450px] bg-white rounded-[10px] overflow-y-auto scrollbar max-h-[90vh] sticky top-[30px]"
       style={{
         boxShadow: "0px 4px 9px 0px #98A0B440",
       }}>
