@@ -121,15 +121,13 @@ const Filter = ({ onSubmit, initialQuery }) => {
     const parsedDate = new Date(date);
     if (isNaN(parsedDate.getTime())) {
       // If the date is invalid, return the default value "2024-12-03"
-      return "2024-12-03";
+      return "";
     }
     return parsedDate.toISOString().split("T")[0]; // Formats as "YYYY-MM-DD"
   };
 
   const [moveInDate, setMoveInDate] = useState<string>(
-    initialQuery?.arriveDate
-      ? formatDate(initialQuery.arriveDate)
-      : "2024-12-03"
+    initialQuery?.arriveDate ? formatDate(initialQuery.arriveDate) : ""
   );
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -215,7 +213,7 @@ const Filter = ({ onSubmit, initialQuery }) => {
       microDistrict: microDistrict, // "string"
       minPrice: priceRange[0], // number
       maxPrice: priceRange[1], // number
-      numberOfPeopleAreYouAccommodating: housemates, // number
+      numberOfPeopleAreYouAccommodating: parseInt(housemates), // number
       quantityOfRooms: roommates, // "string"
       minAge: ageRange[0], // number
       maxAge: ageRange[1], // number
