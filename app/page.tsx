@@ -23,6 +23,7 @@ export default function Home() {
   const [errorMessage, setErrorMessage] = useState("");
   const [initialQuery, setInitialQuery] = useState(null);
   const [announcements, setAnnouncements] = useState([]);
+  const [viewType, setViewType] = useState<"lists" | "map">("lists");
   const [selectedSort, setSelectedSort] = useState<string>("Самые подходящие");
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState<boolean>(false);
   const [isMapDropdownOpen, setMapDropdownOpen] = useState<boolean>(false);
@@ -53,25 +54,48 @@ export default function Home() {
   useEffect(() => {
     const fetchAllAnnouncements = async () => {
       try {
-        const sortValue = sortMapping[selectedSort];
-        const response = await axiosInstance.get("/announcement/all", {
+        // setIsLoading(true); // Start loading
+
+        // Determine the endpoint dynamically
+        const endpoint =
+          viewType === "lists"
+            ? "/announcement/all"
+            : "/announcement/all-for-map";
+
+        // Map selected sort to the corresponding sort value
+        const sortValue = sortMapping[selectedSort] || "defaultSortValue";
+
+        // Fetch data from the API
+        const response = await axiosInstance.get(endpoint, {
           params: { sort: sortValue },
         });
-        // Assuming response.data is an array of announcements
+
+        // Update announcements state
         setAnnouncements(response.data || []);
-      } catch (error: any) {
+        setErrorMessage(""); // Clear any previous error messages
+      } catch (error) {
         console.error(
           "Error fetching announcements:",
           error.response?.data?.message || error.message
         );
+
+        // Set an error message
         setErrorMessage(
           error.response?.data?.message || "Failed to fetch announcements"
         );
+      } finally {
+        // setIsLoading(false); // Stop loading
       }
     };
 
     fetchAllAnnouncements();
-  }, [selectedSort]);
+
+    // Cleanup function to prevent setting state after unmount
+    return () => {
+      setAnnouncements([]);
+      setErrorMessage("");
+    };
+  }, [selectedSort, viewType]);
 
   useEffect(() => {
     if (query) {
@@ -103,26 +127,57 @@ export default function Home() {
     setIsSortDropdownOpen(!isSortDropdownOpen);
   };
   const toggleMapDropdown = () => {
-    setMapDropdownOpen(!isMapDropdownOpen);
+    setMapDropdownOpen(true);
+    setViewType("map");
   };
 
+  const [isFilterVisible, setFilterVisible] = useState(true); // State for filter visibility
+
+  const handleFilterVisibility = () => {
+    setFilterVisible(!isFilterVisible); // Toggle filter visibility
+  };
   return (
     <div className="min-h-full min-w-full space-y-[40px]">
       <Header isFilterResults={false} />
 
       {isMapDropdownOpen ? (
         <div className="relative w-full h-[90vh]">
-          {/* Map in the background with a higher z-index */}
+          {/* Map Background */}
           <div className="absolute inset-0 z-0">
-            <Map />
+            <Map announcements={announcements} />
           </div>
 
-          {/* Filter and "To List View" button in the foreground with a lower z-index */}
-          <div className="absolute top-0 left-0 right-0 z-10 w-[1300px] mx-auto flex justify-between items-start p-4">
-            <Filter onSubmit={handleFilterSubmit} initialQuery={initialQuery} />
+          {/* Filter in the Foreground */}
+          {isFilterVisible && (
+            <div className="absolute left-10 top-5 z-10 bg-white p-4 rounded-lg shadow-lg flex flex-col items-end">
+              <button
+                onClick={handleFilterVisibility} // Close filter
+                className="text-gray-600 hover:text-gray-900 text-2xl mb-[10px]">
+                <Images.close />
+              </button>
+              <Filter
+                onSubmit={handleFilterSubmit}
+                initialQuery={initialQuery}
+              />
+            </div>
+          )}
+
+          {/* "To List View" Button */}
+          <div className="absolute top-10 right-10 z-10 flex gap-4">
+            {/* Button 1 */}
             <button
-              onClick={() => setMapDropdownOpen(false)}
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md">
+              onClick={handleFilterVisibility}
+              className="bg-white text-black px-5 py-4 rounded-lg border-[1px] border-[#BFBFBF4D] text-[24px]">
+              <Images.filterIcon />
+            </button>
+
+            {/* Button 2 */}
+            <button
+              onClick={() => {
+                setMapDropdownOpen(false);
+                setViewType("lists");
+              }}
+              className="bg-white text-black px-10 py-4 rounded-lg border-[1px] border-[#BFBFBF4D] text-[24px]">
               Списком
             </button>
           </div>

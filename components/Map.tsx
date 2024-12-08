@@ -3,7 +3,7 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import supercluster from "supercluster";
 
-const Map = () => {
+const Map = ({ announcements }) => {
   // Set the Mapbox Access Token
   mapboxgl.accessToken =
     "pk.eyJ1IjoibWVpcm1hbi1pcy1yZWF0b3IiLCJhIjoiY2x5NjVpaWNlMDVneDJ0c2F6cTVxNzZqNSJ9.WVkGzQEf4yJGjr98WSgzpA";
@@ -20,71 +20,187 @@ const Map = () => {
   const [selectedRoommates, setSelectedRoommates] = useState([]);
   const [scrollTopVisible, setScrollTopVisible] = useState(false);
 
-  // Sample data for roomates
+  // Function to load and parse roommate data
   const loadRoommatesData = () => {
-    const data = [
-      { id: 1, price: 3000000, lat: 40.7128, lon: -74.006, name: "Roommate 1" },
-      { id: 2, price: 2500000, lat: 40.7338, lon: -74.016, name: "Roommate 2" },
-      { id: 3, price: 5000000, lat: 40.7528, lon: -74.036, name: "Roommate 3" },
-      { id: 4, price: 4500000, lat: 40.7428, lon: -74.026, name: "Roommate 4" },
-    ];
+    // console.log("Received announcements:", announcements); // Debug log
+    const data = announcements
+      .map((announcement) => {
+        const { announcementId, cost, coordsX, coordsY, title, image } =
+          announcement;
+
+        // Attempt to parse coordinates as floats
+        const parsedLon = parseFloat(coordsY);
+        const parsedLat = parseFloat(coordsX);
+
+        // Validate parsed coordinates
+        if (
+          isNaN(parsedLon) ||
+          isNaN(parsedLat) ||
+          parsedLon < -180 ||
+          parsedLon > 180 ||
+          parsedLat < -90 ||
+          parsedLat > 90
+        ) {
+          console.warn(
+            `Invalid coordinates for announcement ID: ${announcementId}. Received coordsX: ${coordsX}, coordsY: ${coordsY}`
+          );
+          return null; // Exclude invalid data
+        }
+
+        return {
+          id: announcementId,
+          price: cost,
+          lat: parsedLat,
+          lon: parsedLon,
+          title: title || "Unknown Roommate",
+          image: image,
+        };
+      })
+      .filter(Boolean); // Remove null entries
+
+    // console.log("Processed roommatesData:", data); // Debug log
     return data;
   };
 
-  // Initialize the map
+  // Initialize the map and handle clustering
   useEffect(() => {
+    // Initialize the map only once
+    // if (map.current) return;
+
+    // Create a new Mapbox map instance
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: "mapbox://styles/mapbox/streets-v11",
-      center: [-74.006, 40.7128], // Starting coordinates (New York)
-      zoom: 12,
+      center: [76.9286, 43.2383], // Centered on Almaty
+      zoom: 12, // Adjusted zoom level
     });
 
-    // Load room data
-    const roommatesData = loadRoommatesData();
+    // Once the map is loaded, perform clustering and marker rendering
+    map.current.on("load", () => {
+      const roommatesData = loadRoommatesData();
 
-    // Add markers to the map
-    roommatesData.forEach((roommate) => {
-      const marker = new mapboxgl.Marker()
-        .setLngLat([roommate.lon, roommate.lat])
-        .addTo(map.current);
-      markers.current.push(marker);
-    });
+      if (roommatesData.length === 0) {
+        console.warn("No valid roommates data to display on the map.");
+        return;
+      }
 
-    // Add clustering
-    cluster.current.load(
-      roommatesData.map((roommate) => ({
-        type: "Feature",
-        properties: {
-          id: roommate.id,
-          price: roommate.price,
-          name: roommate.name,
-        },
-        geometry: { type: "Point", coordinates: [roommate.lon, roommate.lat] },
-      }))
-    );
-
-    // Update clusters on zoom or move
-    map.current.on("moveend", () => {
-      const bounds = map.current.getBounds();
-      const points = cluster.current.getClusters(
-        [
-          bounds.getWest(),
-          bounds.getSouth(),
-          bounds.getEast(),
-          bounds.getNorth(),
-        ],
-        0
+      // Load data into Supercluster
+      cluster.current.load(
+        roommatesData.map((roommate) => ({
+          type: "Feature",
+          properties: {
+            cluster: false, // Indicates individual points
+            id: roommate.id,
+            cost: roommate.price,
+            title: roommate.title,
+            image: roommate.image,
+          },
+          geometry: {
+            type: "Point",
+            coordinates: [roommate.lon, roommate.lat],
+          },
+        }))
       );
 
-      // Logic to display clusters or individual markers based on zoom level
-      console.log(points);
+      // Function to render clusters and markers
+      const renderClusters = () => {
+        const bounds = map.current.getBounds();
+        const zoom = Math.floor(map.current.getZoom());
+
+        // Retrieve clusters within the current map bounds and zoom level
+        const clusters = cluster.current.getClusters(
+          [
+            bounds.getWest(),
+            bounds.getSouth(),
+            bounds.getEast(),
+            bounds.getNorth(),
+          ],
+          zoom
+        );
+
+        // Remove existing markers to avoid duplication
+        markers.current.forEach((marker) => marker.remove());
+        markers.current = [];
+
+        // Iterate through each cluster or point and render markers accordingly
+        clusters.forEach((clusterFeature) => {
+          const [lng, lat] = clusterFeature.geometry.coordinates;
+
+          if (clusterFeature.properties.cluster) {
+            // It's a cluster
+            const pointCount = clusterFeature.properties.point_count;
+            const marker = new mapboxgl.Marker({
+              color: "#FF5733", // Customize cluster marker color
+            })
+              .setLngLat([lng, lat])
+              .setPopup(
+                new mapboxgl.Popup().setHTML(
+                  `<strong>${pointCount} обьявлении</strong>`
+                )
+              )
+              .addTo(map.current);
+            markers.current.push(marker);
+          } else {
+            // It's an individual point
+            const { id, title, cost, image } = clusterFeature.properties;
+            console.log(clusterFeature.properties);
+            const marker = new mapboxgl.Marker({
+              color: "#3FB1CE", // Customize individual marker color
+            })
+              .setLngLat([lng, lat])
+              .setPopup(
+                new mapboxgl.Popup().setHTML(`
+                  <a href="/announcement/${id}" style="text-decoration: none; color: inherit;">
+    <div style="
+      padding: 10px; 
+      background: white; 
+      border-radius: 10px; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: flex-start; 
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    ">
+      <img 
+        src="${image}" 
+        alt="${title}" 
+        style="
+          width: 100%; 
+          max-width: 400px; 
+          height: 160px; 
+          border-radius: 10px; 
+          object-fit: cover; 
+          margin-bottom: 10px;
+        "
+      />
+      <strong style="font-size: 16px; font-weight: 700; color: #252525;">${title}</strong>
+      <p style="margin: 10px 0 0; font-size: 16px; font-weight: 700; color: #252525;">
+        ${cost}
+        <span style="text-decoration: underline;">₸</span>
+      </p>
+    </div>
+  </a>
+                `)
+              )
+              .addTo(map.current);
+            markers.current.push(marker);
+          }
+        });
+      };
+
+      // Initial rendering of clusters and markers
+      renderClusters();
+
+      // Re-render clusters and markers whenever the map is moved or zoomed
+      map.current.on("moveend", () => {
+        renderClusters();
+      });
     });
 
+    // Clean up on component unmount
     return () => {
-      map.current.remove();
+      if (map.current) map.current.remove();
     };
-  }, []);
+  }, [announcements]); // Added 'announcements' as a dependency in case data changes
 
   // Scroll to Top logic
   useEffect(() => {
@@ -114,23 +230,22 @@ const Map = () => {
         style={{ width: "100%", height: "970px" }}
         className="h-full"></div>
 
-      {/* Scroll to Top Button */}
-      {scrollTopVisible && (
-        <button
-          onClick={scrollToTop}
-          style={{
-            position: "fixed",
-            bottom: "20px",
-            right: "20px",
-            backgroundColor: "#007bff",
-            color: "#fff",
-            padding: "10px",
-            borderRadius: "50%",
-            border: "none",
-          }}>
-          ↑
-        </button>
-      )}
+      {/* {scrollTopVisible && ( */}
+      <button
+        onClick={scrollToTop}
+        style={{
+          position: "fixed",
+          bottom: "20px",
+          right: "20px",
+          backgroundColor: "#007bff",
+          color: "#fff",
+          padding: "10px 20px",
+          borderRadius: "10px",
+          border: "none",
+        }}>
+        ↑
+      </button>
+      {/* )} */}
     </div>
   );
 };
