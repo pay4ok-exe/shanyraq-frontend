@@ -7,7 +7,7 @@ import Image from "next/image";
 import * as Images from "@/public/images";
 import Progress from "@/components/progress";
 import ProfilePage from "./profile";
-import MyAnnouncements from "@/components/my-announcements";
+import MyAnnouncements from "@/app/profile/my-announcements";
 import MenuItem from "@/components/ui/MenuItem";
 import axiosInstance from "@/axiosInstance/axios";
 import { useRouter } from "next/navigation";

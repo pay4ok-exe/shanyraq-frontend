@@ -273,7 +273,7 @@ const Filter = ({ onSubmit, initialQuery }) => {
 
   return (
     <aside
-      className="filter min-w-[450px] bg-white rounded-[10px] overflow-y-auto scrollbar max-h-[90vh] sticky top-[30px]"
+      className="filter max-w-[450px] bg-white rounded-[10px] overflow-y-auto scrollbar max-h-[90vh] sticky top-[30px]"
       style={{
         boxShadow: "0px 4px 9px 0px #98A0B440",
       }}>
