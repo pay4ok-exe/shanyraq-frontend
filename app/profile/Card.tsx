@@ -17,6 +17,7 @@ type CardProps = {
   handleArchieve: (id: number) => void;
   handleRestore: (id: number) => void;
   handleDelete: (id: number) => void;
+  handleEdit: (id: number) => void;
   isArchieved: boolean;
 };
 
@@ -25,6 +26,7 @@ const Card: React.FC<CardProps> = ({
   handleArchieve,
   handleRestore,
   handleDelete,
+  handleEdit,
   isArchieved,
 }) => {
   return (
@@ -144,8 +146,8 @@ const Card: React.FC<CardProps> = ({
           type="button"
           onClick={(e) => {
             e.stopPropagation();
-            // if (isArchieved) handleRestore(card?.announcementId);
-            handleDelete(card?.announcementId);
+            if (isArchieved) handleEdit(card?.announcementId);
+            else handleDelete(card?.announcementId);
           }}
           className="bg-gray-900 font-semibold text-[12px] text-white px-4 py-2 rounded-lg hover:bg-gray-700">
           {isArchieved ? "Редактировать" : "Удалить"}

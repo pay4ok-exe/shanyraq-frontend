@@ -137,7 +137,7 @@ const Header: React.FC<HeaderProps> = ({ isFilterResults }) => {
   };
 
   return (
-    <header className="min-w-full">
+    <header className="min-w-full z-30">
       <div className="max-w-[1300px] mx-auto mt-6 space-y-3">
         <section className="flex flex-row justify-between">
           <div className="relative flex items-start space-x-2">

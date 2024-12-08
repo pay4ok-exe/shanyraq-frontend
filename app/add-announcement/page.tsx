@@ -49,56 +49,174 @@ const AddAnnouncementModal = () => {
     },
     selectedAdjectives: [],
   });
+  const [isEditing, setIsEditing] = useState(false);
+  const [isEditingId, setIsEditingId] = useState(0);
 
-  const handleSubmit = async () => {
+  useEffect(() => {
+    const announcementDetail = sessionStorage.getItem("announcement_details");
+    if (announcementDetail) {
+      try {
+        const parsedDetail = JSON.parse(announcementDetail);
+        setIsEditing(true);
+        setIsEditingId(parsedDetail?.id);
+        setFormData((prev) => ({
+          ...prev,
+          role: "Я житель",
+          title: parsedDetail?.title || "",
+          gender: parsedDetail?.selectedGender || "",
+          roommates: parsedDetail?.numberOfPeopleAreYouAccommodating || 1,
+          peopleInApartment:
+            parsedDetail?.howManyPeopleLiveInThisApartment || 0,
+          region: parsedDetail?.region || "",
+          district: parsedDetail?.district || "",
+          microDistrict: parsedDetail?.microDistrict || "",
+          address: parsedDetail?.address || "",
+          moveInDate: parsedDetail?.arriveDate || "",
+          monthlyPayment: parsedDetail?.cost || "",
+          deposit: parsedDetail?.isDepositRequired || false,
+          livingInHome: parsedDetail?.doYouLiveInThisHouse || true,
+          ageRange: [parsedDetail?.minAge || 18, parsedDetail?.maxAge || 50],
+          depositAmount: parsedDetail?.deposit || 0,
+          apartmentDetails: {
+            petsAllowed: parsedDetail?.arePetsAllowed || false,
+            utilitiesIncluded: parsedDetail?.isCommunalServiceIncluded || false,
+            utilitiesAmount: [
+              parsedDetail?.minAmountOfCommunalService || 0,
+              parsedDetail?.maxAmountOfCommunalService || 5000,
+            ],
+            forStudents: parsedDetail?.intendedForStudents || false,
+            badHabitsAllowed: parsedDetail?.areBadHabitsAllowed || false,
+            description: parsedDetail?.apartmentsInfo || "",
+            photos:
+              (parsedDetail?.photos || []).map(
+                (photo: { url: string }) => photo.url
+              ) || [],
+            rooms: parsedDetail?.quantityOfRooms || "1",
+            propertyType: parsedDetail?.typeOfHousing || "",
+            floorsFrom: parsedDetail?.numberOfFloor || 1,
+            floorsTo: parsedDetail?.maxFloorInTheBuilding || 3,
+            ownerPhone: parsedDetail?.phoneNumber || "",
+            longTerm: parsedDetail?.forALongTime || false,
+            roomSize: parsedDetail?.areaOfTheApartment || 0,
+          },
+          selectedAdjectives: parsedDetail?.preferences || [],
+        }));
+        setCurrentStep(1);
+        sessionStorage.removeItem("announcement_details");
+      } catch (error) {
+        console.error("Failed to parse session storage data:", error);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log("Updated formData:", formData);
+    console.log(isEditingId);
+  }, [formData]);
+
+  const handleSubmit = async (isEditing: any) => {
     try {
       console.log("Form data before submission:", formData);
       // Prepare the data for the POST request based on the formData
-      const requestData = {
-        role: formData.role,
-        title: formData.title,
-        selectedGender: formData.gender,
-        doYouLiveInThisHouse: formData.livingInHome, // Assume true if there are housemates
-        howManyPeopleLiveInThisApartment: formData.peopleInApartment.toString(),
-        numberOfPeopleAreYouAccommodating: formData.roommates,
-        minAge: formData.ageRange[0], // Default to 0 if not specified
-        maxAge: formData.ageRange[1], // Default to 0 if not specified
-        region: formData.region, // Set default if missing
-        district: formData.district, // Set default if missing
-        microDistrict: formData.microDistrict, // Set default if missing
-        address: formData.address,
-        arriveDate: formatDate(formData.moveInDate), // Default to today's date or empty if not provided
-        cost: parseInt(formData.monthlyPayment), // Parse monthlyPayment as a number
-        quantityOfRooms: formData.apartmentDetails.rooms,
-        isDepositRequired: formData.deposit,
-        deposit: parseInt(formData.depositAmount.toString()),
-        arePetsAllowed: formData.apartmentDetails.petsAllowed,
-        isCommunalServiceIncluded: formData.apartmentDetails.utilitiesIncluded,
-        minAmountOfCommunalService:
-          formData.apartmentDetails.utilitiesAmount[0],
-        maxAmountOfCommunalService:
-          formData.apartmentDetails.utilitiesAmount[1],
-        intendedForStudents: formData.apartmentDetails.forStudents,
-        areBadHabitsAllowed: formData.apartmentDetails.badHabitsAllowed,
-        apartmentsInfo: formData.apartmentDetails.description,
-        images: formData.apartmentDetails.photos, // Assuming there are photos
-        typeOfHousing: formData.apartmentDetails.propertyType, // Set default
-        numberOfFloor: formData.apartmentDetails.floorsTo, // Adjust if necessary
-        maxFloorInTheBuilding: formData.apartmentDetails.floorsFrom, // Adjust as per your data
-        areaOfTheApartment: formData.apartmentDetails.roomSize, // Adjust if necessary
-        forALongTime: formData.apartmentDetails.longTerm, // Adjust according to your data
-        phoneNumber: formData.apartmentDetails.ownerPhone, // Assuming you store the owner's phone in formData
-        preferences: formData.selectedAdjectives, // Assuming selectedAdjectives as preferences
-      };
+      if (!isEditing) {
+        const requestData = {
+          role: formData.role,
+          title: formData.title,
+          selectedGender: formData.gender,
+          doYouLiveInThisHouse: formData.livingInHome, // Assume true if there are housemates
+          howManyPeopleLiveInThisApartment:
+            formData.peopleInApartment.toString(),
+          numberOfPeopleAreYouAccommodating: formData.roommates,
+          minAge: formData.ageRange[0], // Default to 0 if not specified
+          maxAge: formData.ageRange[1], // Default to 0 if not specified
+          region: formData.region, // Set default if missing
+          district: formData.district, // Set default if missing
+          microDistrict: formData.microDistrict, // Set default if missing
+          address: formData.address,
+          arriveDate: formatDate(formData.moveInDate), // Default to today's date or empty if not provided
+          cost: parseInt(formData.monthlyPayment), // Parse monthlyPayment as a number
+          quantityOfRooms: formData.apartmentDetails.rooms,
+          isDepositRequired: formData.deposit,
+          deposit: parseInt(formData.depositAmount.toString()),
+          arePetsAllowed: formData.apartmentDetails.petsAllowed,
+          isCommunalServiceIncluded:
+            formData.apartmentDetails.utilitiesIncluded,
+          minAmountOfCommunalService:
+            formData.apartmentDetails.utilitiesAmount[0],
+          maxAmountOfCommunalService:
+            formData.apartmentDetails.utilitiesAmount[1],
+          intendedForStudents: formData.apartmentDetails.forStudents,
+          areBadHabitsAllowed: formData.apartmentDetails.badHabitsAllowed,
+          apartmentsInfo: formData.apartmentDetails.description,
+          images: formData.apartmentDetails.photos, // Assuming there are photos
+          typeOfHousing: formData.apartmentDetails.propertyType, // Set default
+          numberOfFloor: formData.apartmentDetails.floorsFrom, // Adjust if necessary
+          maxFloorInTheBuilding: formData.apartmentDetails.floorsTo, // Adjust as per your data
+          areaOfTheApartment: formData.apartmentDetails.roomSize, // Adjust if necessary
+          forALongTime: formData.apartmentDetails.longTerm, // Adjust according to your data
+          phoneNumber: formData.apartmentDetails.ownerPhone, // Assuming you store the owner's phone in formData
+          preferences: formData.selectedAdjectives, // Assuming selectedAdjectives as preferences
+        };
 
-      // Send the data to the server
-      const response = await axiosInstance.post(
-        "/announcement/create",
-        requestData
-      );
+        // Send the data to the server
+        const response = await axiosInstance.post(
+          "/announcement/create",
+          requestData
+        );
 
-      // Handle successful response
-      console.log("Announcement created successfully", response);
+        // Handle successful response
+        alert("Announcement created successfully");
+      } else {
+        const requestData = {
+          role: formData.role,
+          title: formData.title,
+          selectedGender: formData.gender,
+          doYouLiveInThisHouse: formData.livingInHome, // Assume true if there are housemates
+          howManyPeopleLiveInThisApartment:
+            formData.peopleInApartment.toString(),
+          numberOfPeopleAreYouAccommodating: formData.roommates,
+          minAge: formData.ageRange[0], // Default to 0 if not specified
+          maxAge: formData.ageRange[1], // Default to 0 if not specified
+          region: formData.region, // Set default if missing
+          district: formData.district, // Set default if missing
+          microDistrict: formData.microDistrict, // Set default if missing
+          address: formData.address,
+          arriveDate: formatDate(formData.moveInDate), // Default to today's date or empty if not provided
+          cost: parseInt(formData.monthlyPayment), // Parse monthlyPayment as a number
+          quantityOfRooms: formData.apartmentDetails.rooms,
+          isDepositRequired: formData.deposit,
+          deposit: parseInt(formData.depositAmount.toString()),
+          arePetsAllowed: formData.apartmentDetails.petsAllowed,
+          isCommunalServiceIncluded:
+            formData.apartmentDetails.utilitiesIncluded,
+          minAmountOfCommunalService:
+            formData.apartmentDetails.utilitiesAmount[0],
+          maxAmountOfCommunalService:
+            formData.apartmentDetails.utilitiesAmount[1],
+          intendedForStudents: formData.apartmentDetails.forStudents,
+          areBadHabitsAllowed: formData.apartmentDetails.badHabitsAllowed,
+          apartmentsInfo: formData.apartmentDetails.description,
+          images: formData.apartmentDetails.photos, // Assuming there are photos
+          typeOfHousing: formData.apartmentDetails.propertyType, // Set default
+          numberOfFloor: formData.apartmentDetails.floorsFrom, // Adjust if necessary
+          maxFloorInTheBuilding: formData.apartmentDetails.floorsTo, // Adjust as per your data
+          areaOfTheApartment: formData.apartmentDetails.roomSize, // Adjust if necessary
+          forALongTime: formData.apartmentDetails.longTerm, // Adjust according to your data
+          phoneNumber: formData.apartmentDetails.ownerPhone, // Assuming you store the owner's phone in formData
+          preferences: formData.selectedAdjectives, // Assuming selectedAdjectives as preferences
+        };
+
+        // Send the data to the server
+
+        console.log(isEditingId);
+        const response = await axiosInstance.put(
+          `/announcement/update/${Number(isEditingId)}`,
+          requestData
+        );
+
+        // Handle successful response
+        alert("Announcement updated successfully");
+      }
 
       // Optionally, reset form data or redirect after successful submission
       setFormData({
@@ -137,9 +255,13 @@ const AddAnnouncementModal = () => {
       });
 
       setCurrentStep(1);
+      sessionStorage.removeItem("announcement_details");
       closeModal();
 
-      router.push("/landing"); // Redirect to login or another page after success
+      if (isEditing) router.push("/profile");
+      else router.push("/");
+
+      setIsEditing(false);
     } catch (error: any) {
       console.error("Announcement creation failed:", error);
     }
@@ -205,7 +327,7 @@ const AddAnnouncementModal = () => {
         <button
           className="absolute top-4 right-4 text-gray-600 hover:text-gray-900 text-2xl"
           onClick={() => {
-            if (currentStep === 6) handleSubmit();
+            if (currentStep === 6) handleSubmit(isEditing);
             closeModal();
           }}>
           <Images.close />
@@ -218,6 +340,7 @@ const AddAnnouncementModal = () => {
             handleBack={handleBack}
             closeModal={closeModal}
             handleSubmit={handleSubmit}
+            isEditing={isEditing}
           />
         </div>
       </div>
@@ -337,7 +460,13 @@ function StepRole({ handleNext, formData, setFormData, closeModal }: any) {
   );
 }
 
-function StepBasicInfo({ handleNext, handleBack, formData, setFormData }: any) {
+function StepBasicInfo({
+  handleNext,
+  handleBack,
+  formData,
+  setFormData,
+  isEditing,
+}: any) {
   const [title, setTitle] = useState(formData.title || "");
   const [gender, setGender] = useState(formData.gender || "");
   const [livingInHome, setLivingInHome] = useState(
@@ -382,7 +511,7 @@ function StepBasicInfo({ handleNext, handleBack, formData, setFormData }: any) {
   return (
     <div className="flex flex-col gap-[36px]">
       <h2 className="text-[24px] font-circular font-semibold leading-[30px] text-[#252525] text-left mb-[14px]">
-        Создание нового объявления
+        {isEditing ? "Редактирование объявления" : "Создание нового объявления"}
       </h2>
 
       {/* Title Input */}
@@ -1428,7 +1557,13 @@ function StepApartmentFullDetails({
   );
 }
 
-function StepSuccess({ formData, setFormData, closeModal, handleSubmit }: any) {
+function StepSuccess({
+  formData,
+  setFormData,
+  closeModal,
+  handleSubmit,
+  isEditing,
+}: any) {
   const adjectives = [
     "Платежеспособная/ный",
     "Чистоплотная/ный",
@@ -1439,7 +1574,9 @@ function StepSuccess({ formData, setFormData, closeModal, handleSubmit }: any) {
     "Аккуратная/ный",
   ];
 
-  const [selectedAdjectives, setSelectedAdjectives] = useState<string[]>([]);
+  const [selectedAdjectives, setSelectedAdjectives] = useState<string[]>(
+    formData.selectedAdjectives || []
+  );
 
   useEffect(() => {
     setFormData((prevFormData: any) => ({
@@ -1461,7 +1598,9 @@ function StepSuccess({ formData, setFormData, closeModal, handleSubmit }: any) {
       <div className="w-[500px] mx-auto flex flex-col text-center gap-[32px] items-center justify-center">
         <Images.finished />
         <h2 className="text-[24px] font-circular font-semibold leading-[30px] text-[#252525] px-[50px]">
-          Поздравляем! Ваше объявление успешно загружено.
+          {isEditing
+            ? "Поздравляем! Ваше объявление успешно изменено"
+            : "Поздравляем! Ваше объявление успешно загружено"}
         </h2>
       </div>
 
@@ -1501,7 +1640,7 @@ function StepSuccess({ formData, setFormData, closeModal, handleSubmit }: any) {
       {/* Navigation Buttons */}
       <div className="flex justify-center items-center mt-[25px] pt-[25px] border-t-[1px] text-[#FFFFFF]">
         <button
-          onClick={handleSubmit}
+          onClick={() => handleSubmit(isEditing)}
           className="px-[38px] py-[15px] text-[16px] font-bold leading-[20px] tracking-[0.2px] rounded-[5px] bg-[#32343A]">
           Завершить
         </button>

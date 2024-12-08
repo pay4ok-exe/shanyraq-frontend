@@ -181,7 +181,7 @@ export default function ProfilesPage() {
                   <img
                     src={formData.photo}
                     alt="User Photo"
-                    className="w-auto h-[130px] object-cover"
+                    className="min-w-[130px] h-[130px] object-cover"
                   />
                 ) : (
                   <Images.userPhoto h={"130"} w={"130"} />

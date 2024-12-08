@@ -60,13 +60,15 @@ export const ProfilePhotoModal = ({
     // Optional: Validate file type and size here
     const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
     if (!allowedTypes.includes(file.type)) {
-      setPhotoError("Неподдерживаемый тип файла. Пожалуйста, выберите изображение.");
+      setPhotoError(
+        "Неподдерживаемый тип файла. Пожалуйста, выберите изображение."
+      );
       return;
     }
 
-    const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
+    const maxSizeInBytes = 5 * 1024 * 1024 * 50; // 50MB
     if (file.size > maxSizeInBytes) {
-      setPhotoError("Файл слишком большой. Максимальный размер 5MB.");
+      setPhotoError("Файл слишком большой. Максимальный размер 50MB.");
       return;
     }
 
@@ -79,7 +81,9 @@ export const ProfilePhotoModal = ({
   const handleConfirmPhoto = async () => {
     if (!tempPhoto) return; // No photo to upload
 
-    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    const fileInput = document.querySelector(
+      'input[type="file"]'
+    ) as HTMLInputElement;
     const file = fileInput?.files?.[0];
     if (!file) {
       setPhotoError("Файл не выбран.");
@@ -93,15 +97,19 @@ export const ProfilePhotoModal = ({
       setUploadingPhoto(true);
       setPhotoError(null);
 
-      const response = await axiosInstance.post("/profile/upload-photo", formData, {
-        headers: {
+      const response = await axiosInstance.post(
+        "/profile/upload-photo",
+        formData,
+        {
+          headers: {
             "Content-Type": "multipart/form-data", // Удалено
           },
-      });
+        }
+      );
 
       // Assuming the backend returns the URL directly
       const uploadedUrl: string = response.data.url || response.data; // Adjust based on actual response
-      console.log(uploadedUrl)
+      console.log(uploadedUrl);
 
       // Update the form data with the uploaded photo URL
       setFormData((prev: any) => ({
@@ -112,7 +120,10 @@ export const ProfilePhotoModal = ({
       closePhotoModal(); // Close the modal after the upload
     } catch (error: any) {
       console.error("Upload failed:", error);
-      setPhotoError(error.response?.data?.message || "Не удалось загрузить фото. Пожалуйста, попробуйте позже.");
+      setPhotoError(
+        error.response?.data?.message ||
+          "Не удалось загрузить фото. Пожалуйста, попробуйте позже."
+      );
     } finally {
       setUploadingPhoto(false);
     }
@@ -126,18 +137,20 @@ export const ProfilePhotoModal = ({
       onDragEnter={handleDragEnter}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
-    >
+      onDrop={handleDrop}>
       <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-        <h2 className="text-lg font-semibold mb-6 text-[#252525]">Изменить фото</h2>
+        <h2 className="text-lg font-semibold mb-6 text-[#252525]">
+          Изменить фото
+        </h2>
 
         {/* Drag-and-drop area */}
         <div
           className={`mb-4 border-2 border-dashed p-6 rounded-lg text-center cursor-pointer ${
-            fileEnter ? "border-blue-500 bg-gray-100" : "border-gray-300 bg-gray-50"
+            fileEnter
+              ? "border-blue-500 bg-gray-100"
+              : "border-gray-300 bg-gray-50"
           }`}
-          onClick={() => document.getElementById("file-input")?.click()}
-        >
+          onClick={() => document.getElementById("file-input")?.click()}>
           {tempPhoto ? (
             <img
               src={tempPhoto}
@@ -145,7 +158,9 @@ export const ProfilePhotoModal = ({
               className="w-32 h-32 object-cover rounded-full mx-auto"
             />
           ) : (
-            <p className="text-gray-500">Перетащите фото сюда или выберите файл</p>
+            <p className="text-gray-500">
+              Перетащите фото сюда или выберите файл
+            </p>
           )}
           <input
             type="file"
@@ -157,10 +172,14 @@ export const ProfilePhotoModal = ({
         </div>
 
         {/* Display upload status */}
-        {uploadingPhoto && <div className="mb-4 text-center text-blue-500">Загрузка...</div>}
+        {uploadingPhoto && (
+          <div className="mb-4 text-center text-blue-500">Загрузка...</div>
+        )}
 
         {/* Display error message */}
-        {photoError && <div className="mb-4 text-center text-red-500">{photoError}</div>}
+        {photoError && (
+          <div className="mb-4 text-center text-red-500">{photoError}</div>
+        )}
 
         {/* Action buttons */}
         <div className="flex flex-col items-center gap-4">
@@ -168,15 +187,13 @@ export const ProfilePhotoModal = ({
             type="button"
             onClick={handleConfirmPhoto}
             className="bg-[#1aa683] text-white px-6 py-2 rounded-lg hover:bg-[#158f72] w-full text-center disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={!tempPhoto || uploadingPhoto}
-          >
+            disabled={!tempPhoto || uploadingPhoto}>
             Подтвердить
           </button>
           <button
             type="button"
             onClick={closePhotoModal}
-            className="text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-100 w-full text-center"
-          >
+            className="text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-100 w-full text-center">
             Отмена
           </button>
         </div>

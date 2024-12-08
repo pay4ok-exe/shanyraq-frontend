@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Card from "@/app/profile/Card";
 import axiosInstance from "@/axiosInstance/axios";
+import { useModal } from "@/app/context/modal-context";
 
 const MyAnnouncements = () => {
   const [activeButton, setActiveButton] = useState<"active" | "archived">(
@@ -109,6 +110,30 @@ const MyAnnouncements = () => {
     }
   };
 
+  const { openModal } = useModal();
+  const handleEdit = async (id: number) => {
+    try {
+      const response = await axiosInstance.get(`/announcement/detail/${id}`);
+      // console.log("Detail response:", response.data);
+      const announcementData = response.data;
+      // console.log(announcementData);
+      sessionStorage.setItem(
+        `announcement_details`,
+        JSON.stringify(announcementData)
+      );
+      openModal();
+    } catch (error: any) {
+      console.error(
+        "Error Detail get announcement:",
+        error.response?.data?.message || error.message
+      );
+      alert(
+        error.response?.data?.message ||
+          "Failed to Detail get the announcement."
+      );
+    }
+  };
+
   useEffect(() => {
     setAnnouncements([]);
     fetchAllAnnouncements();
@@ -154,6 +179,7 @@ const MyAnnouncements = () => {
               handleArchieve={handleArchieve}
               handleRestore={handleRestore}
               handleDelete={handleDelete}
+              handleEdit={handleEdit}
               isArchieved={activeButton === "active"}
             />
           ))}
