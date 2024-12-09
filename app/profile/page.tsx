@@ -210,17 +210,17 @@ export default function ProfilesPage() {
                   height={20}
                 />
               </MenuItem>
-              <MenuItem
-                label="Мои отклики"
-                isactive={activeItem === "responses"}
-                onClick={() => setActiveItem("responses")}>
-                <Image
-                  src={"/reply.svg"}
-                  alt="Responses Icon"
-                  width={20}
-                  height={20}
-                />
-              </MenuItem>
+              {/*<MenuItem*/}
+              {/*  label="Мои отклики"*/}
+              {/*  isactive={activeItem === "responses"}*/}
+              {/*  onClick={() => setActiveItem("responses")}>*/}
+              {/*  <Image*/}
+              {/*    src={"/reply.svg"}*/}
+              {/*    alt="Responses Icon"*/}
+              {/*    width={20}*/}
+              {/*    height={20}*/}
+              {/*  />*/}
+              {/*</MenuItem>*/}
               <MenuItem
                 label="Мои объявления"
                 isactive={activeItem === "my-announcements"}
@@ -232,17 +232,17 @@ export default function ProfilesPage() {
                   height={20}
                 />
               </MenuItem>
-              <MenuItem
-                label="Анкета"
-                isactive={activeItem === "questionnaire"}
-                onClick={() => setActiveItem("questionnaire")}>
-                <Image
-                  src={"/edit.svg"}
-                  alt="Questionnaire Icon"
-                  width={20}
-                  height={20}
-                />
-              </MenuItem>
+              {/*<MenuItem*/}
+              {/*  label="Анкета"*/}
+              {/*  isactive={activeItem === "questionnaire"}*/}
+              {/*  onClick={() => setActiveItem("questionnaire")}>*/}
+              {/*  <Image*/}
+              {/*    src={"/edit.svg"}*/}
+              {/*    alt="Questionnaire Icon"*/}
+              {/*    width={20}*/}
+              {/*    height={20}*/}
+              {/*  />*/}
+              {/*</MenuItem>*/}
             </nav>
           </div>
 

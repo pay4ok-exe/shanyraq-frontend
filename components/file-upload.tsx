@@ -128,11 +128,11 @@ export const FileUpload = ({
       {photos.length > 0 && (
         <div className="mt-4">
           <div className="flex justify-between items-center mb-2">
-            <h3 className="text-lg font-semibold">Uploaded Photos</h3>
+            <h3 className="text-lg font-semibold">Загруженные фотографии</h3>
             <button
               onClick={handleReset}
               className="text-sm text-red-500 hover:underline">
-              Reset
+              Удалить все
             </button>
           </div>
           <div className="grid grid-cols-4 gap-4">
@@ -146,7 +146,7 @@ export const FileUpload = ({
                 {/* Кнопка удаления */}
                 <button
                   onClick={() => handleDelete(index)}
-                  className="absolute top-2 right-2 bg-red-500 text-white px-2 rounded-full hover:bg-red-600">
+                  className="absolute top-0 right-0 bg-[#1c181999] text-white px-[10px] py-[5px]   rounded-[5px]">
                   &times;
                 </button>
               </div>

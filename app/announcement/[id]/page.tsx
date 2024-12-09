@@ -186,7 +186,7 @@ const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
                     Описание
                   </a>
                   <a>Информация</a>
-                  <a>Цена</a>
+                  {/*<a>Цена</a>*/}
                   <a>Качества</a>
                 </nav>
               </div>
@@ -215,9 +215,9 @@ const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
                     <div className="text-[#4D4D4D]">Город:</div>
                     <div className="text-[#252525] font-semibold flex flex-col">
                       {announcement.region}, {announcement.district}
-                      <a href="#" className="text-[#1AA683] underline">
-                        показать на карте
-                      </a>
+                      {/*<a href="#" className="text-[#1AA683] underline">*/}
+                      {/*  показать на карте*/}
+                      {/*</a>*/}
                     </div>
 
                     <div className="text-[#4D4D4D]">Тип жилья:</div>
@@ -338,7 +338,7 @@ const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
                         className="flex items-center space-x-2 px-4 py-2 rounded-lg shadow-sm text-[14px] font-semibold"
                       >
                         <Image.callIcon />
-                        <span>Позвонить</span>
+                        <span>{announcement.phoneNumber}</span>
                       </a>
                       <a
                         href={`https://wa.me/${announcement.phoneNumber}`}
@@ -352,31 +352,31 @@ const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
                 </div>
 
                 {/* Interested People Section */}
-                <div className="p-6 border rounded-lg space-y-4">
-                  <div className="flex justify-between items-start">
-                    <p className="text-[#4D4D4D] text-[14px] leading-[20px]">
-                      Заинтересованы в объявлении:
-                      <strong className="block text-[#252525] text-[16px] leading-[20px]">
-                        {announcement.interestedPeopleCount || 0} человек
-                      </strong>
-                    </p>
-                    <a
-                      href="#"
-                      className="text-[#1AA683] text-[14px] underline font-extrabold"
-                    >
-                      посмотреть группы
-                    </a>
-                  </div>
+                {/*<div className="p-6 border rounded-lg space-y-4">*/}
+                {/*  <div className="flex justify-between items-start">*/}
+                {/*    <p className="text-[#4D4D4D] text-[14px] leading-[20px]">*/}
+                {/*      Заинтересованы в объявлении:*/}
+                {/*      <strong className="block text-[#252525] text-[16px] leading-[20px]">*/}
+                {/*        {announcement.interestedPeopleCount || 0} человек*/}
+                {/*      </strong>*/}
+                {/*    </p>*/}
+                {/*    <a*/}
+                {/*      href="#"*/}
+                {/*      className="text-[#1AA683] text-[14px] underline font-extrabold"*/}
+                {/*    >*/}
+                {/*      посмотреть группы*/}
+                {/*    </a>*/}
+                {/*  </div>*/}
 
-                  <p className="text-[#4D4D4D] text-[14px] text-center">
-                    Понравилось помещение? <br />
-                    Подайте заявку!
-                  </p>
+                {/*  <p className="text-[#4D4D4D] text-[14px] text-center">*/}
+                {/*    Понравилось помещение? <br />*/}
+                {/*    Подайте заявку!*/}
+                {/*  </p>*/}
 
-                  <button className="w-full py-3 bg-[#32343A] text-white text-[16px] font-semibold rounded-lg">
-                    Подать заявку
-                  </button>
-                </div>
+                {/*  <button className="w-full py-3 bg-[#32343A] text-white text-[16px] font-semibold rounded-lg">*/}
+                {/*    Подать заявку*/}
+                {/*  </button>*/}
+                {/*</div>*/}
               </div>
             </div>
           </div>
