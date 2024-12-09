@@ -3,10 +3,11 @@ import * as Images from "../public/images";
 
 import Slider from "@mui/material/Slider";
 import { useState } from "react";
-import AddressDatas from "@/app/result.json";
-import { useAnnouncements } from "@/hooks/useAnnouncements";
 import { useRouter } from "next/navigation";
+import AddressDatas from "@/app/result.json";
+
 const Search = () => {
+  const router = useRouter();
   const [city, setCity] = useState("");
   const [price, setPrice] = useState("");
   const [gender, setGender] = useState("");
@@ -56,6 +57,32 @@ const Search = () => {
     setIsHousematesDropdownOpen(false);
   };
 
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const queryParams = {
+      region: address.regionOrCityName || undefined,
+      district: address.districtName || undefined,
+      microDistrict: address.microDistrictName || undefined,
+      minPrice: priceRange[0] || 0,
+      maxPrice: priceRange[1] || 500000,
+      gender: gender || undefined,
+      roommatesCount: housemates || undefined,
+    };
+
+    // Filter out undefined keys
+    const cleanedParams = Object.fromEntries(
+      Object.entries(queryParams).filter(([_, v]) => v !== undefined)
+    );
+
+    // Redirect to home with query parameters
+    const queryString = new URLSearchParams(
+      cleanedParams as Record<string, string>
+    ).toString();
+
+    router.push(`/?${queryString}`);
+  };
+
   const genders = [
     { id: 1, name: "Мужской" },
     { id: 2, name: "Женский" },
@@ -68,32 +95,6 @@ const Search = () => {
     { id: 4, name: "4" },
     { id: 5, name: "5+" },
   ];
-
-  const { updateFilters } = useAnnouncements();
-  const router = useRouter();
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Convert housemates string "5+" to a number or leave undefined
-    let roommatesCount: number | undefined;
-    if (housemates === "5+") roommatesCount = 5;
-    else if (housemates) roommatesCount = parseInt(housemates, 10);
-
-    // Set filters and reset page
-    updateFilters({
-      regionOrCityName: address.regionOrCityName === "Весь Казахстан" ? "" : address.regionOrCityName,
-      districtName: address.districtName,
-      microDistrictName: address.microDistrictName,
-      minPrice: priceRange[0],
-      maxPrice: priceRange[1],
-      gender: gender || undefined,
-      roommatesCount: roommatesCount || undefined,
-    });
-    
-
-    // After setting filters, navigate to home page to see filtered results
-    router.push("/");
-  };
 
   return (
     <div className="w-full mt-[40px] flex justify-center">
@@ -233,9 +234,7 @@ const Search = () => {
                     )}
                 </div>
                 <div>
-                  <button
-                    onClick={toggleAllDropDown}
-                    className="font-circular font-bold text-[14px] text-[#FFFFFF] leading-[17.5px] tracking-[0.2px] bg-[#32343A] px-[55px] py-[12px] rounded-[5px] ">
+                  <button className="font-circular font-bold text-[14px] text-[#FFFFFF] leading-[17.5px] tracking-[0.2px] bg-[#32343A] px-[55px] py-[12px] rounded-[5px] ">
                     Выбрать
                   </button>
                 </div>
@@ -254,9 +253,7 @@ const Search = () => {
               <div className="flex items-center gap-[12px]">
                 <Images.money w={"18"} h={"18"} />
                 <p className="text-left text-[14px] font-normal leading-[18px] text-[#B5B7C0]">
-                  {priceRange && priceRange[0] && priceRange[1]
-                    ? `${priceRange[0]} - ${priceRange[1]}`
-                    : "Выберите цену"}
+                  Выберите цену
                 </p>
               </div>
               <Images.arrowDown w={"18"} h={"18"} />
