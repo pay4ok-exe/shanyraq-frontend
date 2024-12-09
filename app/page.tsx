@@ -4,12 +4,11 @@ import Filter from "@/components/filter";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import { useState, useEffect } from "react";
-import axiosInstance from "@/axiosInstance/axios";
-import * as Images from "@/public/images"; // Import images
+import * as Images from "@/public/images";
 import Link from "next/link";
-import Card from "@/components/card";
 import HomeCard from "@/components/home-card";
 import Map from "@/components/Map";
+import { useAnnouncements } from "@/hooks/useAnnouncements";
 
 const sortMapping = {
   "Самые подходящие": 1,
@@ -19,123 +18,71 @@ const sortMapping = {
 };
 
 export default function Home() {
-  const [query, setQuery] = useState(null);
+  const [query, setQuery] = useState<any>(null);
   const [errorMessage, setErrorMessage] = useState("");
-  const [initialQuery, setInitialQuery] = useState(null);
-  const [announcements, setAnnouncements] = useState([]);
+  const [initialQuery, setInitialQuery] = useState<any>(null);
   const [viewType, setViewType] = useState<"lists" | "map">("lists");
   const [selectedSort, setSelectedSort] = useState<string>("Самые подходящие");
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState<boolean>(false);
   const [isMapDropdownOpen, setMapDropdownOpen] = useState<boolean>(false);
+  const [isFilterVisible, setFilterVisible] = useState(true);
+
+  // Hook that manages announcements fetching and filters
+  const { announcements, updateFilters, loading, error } = useAnnouncements();
 
   const handleFilterSubmit = (queryObject: any) => {
-    // queryObject matches the swagger schema
-    console.log(queryObject);
+    // queryObject matches the swagger schema from your backend
     setQuery(queryObject);
   };
 
+  // Whenever query, selectedSort or viewType changes, update the filters
   useEffect(() => {
-    // Check if there's a saved filter in sessionStorage on page load
-    const savedFilter = sessionStorage.getItem("savedFilter");
-    if (savedFilter) {
-      // Ask user if they want to autofill their saved filter
-      const userWantsToLoad = window.confirm(
-        "У вас есть сохраненный фильтр. Хотите его загрузить?"
-      );
-      if (userWantsToLoad) {
-        const parsedFilter = JSON.parse(savedFilter);
-        console.log(parsedFilter);
-        setInitialQuery(parsedFilter);
-        setQuery(parsedFilter);
-      }
-    }
-  }, []);
+    const sortValue = sortMapping[selectedSort] || 1;
 
-  useEffect(() => {
-    const fetchAllAnnouncements = async () => {
-      try {
-        // setIsLoading(true); // Start loading
-
-        // Determine the endpoint dynamically
-        const endpoint =
-          viewType === "lists"
-            ? "/announcement/all"
-            : "/announcement/all-for-map";
-
-        // Map selected sort to the corresponding sort value
-        const sortValue = sortMapping[selectedSort] || "defaultSortValue";
-
-        // Fetch data from the API
-        const response = await axiosInstance.get(endpoint, {
-          params: { sort: sortValue },
-        });
-
-        // Update announcements state
-        setAnnouncements(response.data || []);
-        setErrorMessage(""); // Clear any previous error messages
-      } catch (error) {
-        console.error(
-          "Error fetching announcements:",
-          error.response?.data?.message || error.message
-        );
-
-        // Set an error message
-        setErrorMessage(
-          error.response?.data?.message || "Failed to fetch announcements"
-        );
-      } finally {
-        // setIsLoading(false); // Stop loading
-      }
-    };
-
-    fetchAllAnnouncements();
-
-    // Cleanup function to prevent setting state after unmount
-    return () => {
-      setAnnouncements([]);
-      setErrorMessage("");
-    };
-  }, [selectedSort, viewType]);
-
-  useEffect(() => {
+    // If we have a query, extract filters from it. Otherwise, just use sorting and viewType.
     if (query) {
-      // Example GET request using query parameters
-      // If your backend expects POST with JSON, use axiosInstance.post("/announcement/search", query)
-      const fetchData = async () => {
-        try {
-          const response = await axiosInstance.get("/announcement/filter", {
-            params: query,
-          });
-          setAnnouncements(response.data || []);
-          setErrorMessage("");
-        } catch (error: any) {
-          console.error(
-            "Error fetching announcements:",
-            error.response?.data?.message || error.message
-          );
-          setErrorMessage(
-            error.response?.data?.message || "Failed to fetch announcements"
-          );
-        }
-      };
-
-      fetchData();
+      updateFilters({
+        regionOrCityName: query.region || "",
+        districtName: query.district || "",
+        microDistrictName: query.microDistrict || "",
+        minPrice: query.minPrice,
+        maxPrice: query.maxPrice,
+        gender: query.gender,
+        roommatesCount: query.roommatesCount,
+        sort: sortValue,
+        viewType: viewType,
+      });
+    } else {
+      // No query means just use the default or currently chosen sorting and viewType
+      updateFilters({
+        sort: sortValue,
+        viewType: viewType,
+      });
     }
-  }, [query]);
+  }, [query, selectedSort, viewType, updateFilters]);
+
+  useEffect(() => {
+    // If useAnnouncements provides an error state, map it to errorMessage
+    if (error) {
+      setErrorMessage(error);
+    } else {
+      setErrorMessage("");
+    }
+  }, [error]);
 
   const toggleSortDropdown = () => {
     setIsSortDropdownOpen(!isSortDropdownOpen);
   };
+
   const toggleMapDropdown = () => {
     setMapDropdownOpen(true);
     setViewType("map");
   };
 
-  const [isFilterVisible, setFilterVisible] = useState(true); // State for filter visibility
-
   const handleFilterVisibility = () => {
-    setFilterVisible(!isFilterVisible); // Toggle filter visibility
+    setFilterVisible(!isFilterVisible);
   };
+
   return (
     <div className="min-h-full min-w-full space-y-[40px]">
       <Header isFilterResults={false} />
@@ -151,7 +98,7 @@ export default function Home() {
           {isFilterVisible && (
             <div className="absolute left-10 top-5 z-10 bg-white p-4 rounded-lg shadow-lg flex flex-col items-end">
               <button
-                onClick={handleFilterVisibility} // Close filter
+                onClick={handleFilterVisibility}
                 className="text-gray-600 hover:text-gray-900 text-2xl mb-[10px]">
                 <Images.close />
               </button>
@@ -164,14 +111,11 @@ export default function Home() {
 
           {/* "To List View" Button */}
           <div className="absolute top-10 right-10 z-10 flex gap-4">
-            {/* Button 1 */}
             <button
               onClick={handleFilterVisibility}
               className="bg-white text-black px-5 py-4 rounded-lg border-[1px] border-[#BFBFBF4D] text-[24px]">
               <Images.filterIcon />
             </button>
-
-            {/* Button 2 */}
             <button
               onClick={() => {
                 setMapDropdownOpen(false);
@@ -185,6 +129,7 @@ export default function Home() {
       ) : (
         <div className="flex-grow w-[1300px] mx-auto">
           {errorMessage && <div className="text-red-500">{errorMessage}</div>}
+          {loading && <div>Загрузка...</div>}
 
           <div className="flex justify-between gap-[45px]">
             <Filter onSubmit={handleFilterSubmit} initialQuery={initialQuery} />
@@ -194,7 +139,7 @@ export default function Home() {
                   <div
                     className="flex items-center gap-[12px] cursor-pointer"
                     onClick={toggleSortDropdown}>
-                    <p className="text-left text-[14px] font-normal leading-[18px] text-[#5c5c5c">
+                    <p className="text-left text-[14px] font-normal leading-[18px] text-[#5c5c5c]">
                       {selectedSort}
                     </p>
                     <Images.arrowDown w={"20"} h={"20"} color={"#5c5c5c"} />
@@ -202,12 +147,7 @@ export default function Home() {
                   {isSortDropdownOpen && (
                     <div className="absolute top-[30px] left-[-10px] bg-white space-y-[12px] min-w-[200px] rounded-[5px] text-left z-10">
                       <ul className="flex flex-col">
-                        {[
-                          "Самые подходящие",
-                          "По возрастанию цены",
-                          "По новизне",
-                          "По убыванию цены",
-                        ].map((sortOption) => (
+                        {Object.keys(sortMapping).map((sortOption) => (
                           <li
                             key={sortOption}
                             onClick={() => {
@@ -231,9 +171,9 @@ export default function Home() {
                 </button>
               </div>
               <div className="flex justify-center">
-                {announcements && announcements.length > 0 && (
+                {announcements && announcements.length > 0 ? (
                   <div className="grid grid-cols-3 gap-4">
-                    {announcements.map((announcement: any, index: number) => (
+                    {announcements.map((announcement: any) => (
                       <Link
                         href={`/announcement/${announcement.announcementId}`}
                         key={announcement.announcementId}>
@@ -241,6 +181,8 @@ export default function Home() {
                       </Link>
                     ))}
                   </div>
+                ) : (
+                  !loading && <div>Нет объявлений</div>
                 )}
               </div>
             </div>

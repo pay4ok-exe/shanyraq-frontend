@@ -4,6 +4,7 @@ import AddressDatas from "@/app/result.json";
 import * as Images from "@/public/images";
 import { useModal } from "@/app/context/modal-context";
 import Slider from "@mui/material/Slider";
+import { useAnnouncements } from "@/hooks/useAnnouncements";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -13,6 +14,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ isFilterResults }) => {
   const router = useRouter();
+  const { updateFilters } = useAnnouncements();
   const [isAuth, setIsAuth] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -71,13 +73,28 @@ const Header: React.FC<HeaderProps> = ({ isFilterResults }) => {
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({
-      address: address,
-      price: priceRange,
-      gender,
-      housemates,
+
+    // Convert housemates string "5+" to a number or leave undefined
+    let roommatesCount: number | undefined;
+    if (housemates === "5+") roommatesCount = 5;
+    else if (housemates) roommatesCount = parseInt(housemates, 10);
+
+    // Update filters just like in the Search component
+    updateFilters({
+      regionOrCityName:
+        address.regionOrCityName === "Весь Казахстан"
+          ? ""
+          : address.regionOrCityName,
+      districtName: address.districtName,
+      microDistrictName: address.microDistrictName,
+      minPrice: priceRange[0],
+      maxPrice: priceRange[1],
+      gender: gender || undefined,
+      roommatesCount: roommatesCount || undefined,
     });
-    // Implement your search logic or API call here
+
+    // Redirect to home page to see filtered results
+    router.push("/");
   };
 
   const genders = [

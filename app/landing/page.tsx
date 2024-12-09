@@ -30,7 +30,7 @@ const LandingPage = () => {
       try {
         const response = await axiosInstance.get("/announcement/great-deals");
         // Преобразуем данные из ответа в формат, ожидаемый компонентом Card
-        const mappedData = response.data.map((item) => ({
+        const mappedData = response.data.map((item: any) => ({
           id: item.announcementId,
           image: item.image,
           title: item.title,
@@ -115,7 +115,7 @@ const LandingPage = () => {
           <div
             ref={scrollContainerRef}
             className="w-full overflow-x-auto hide-scrollbar flex gap-[27px] py-[10px]">
-            {cardData.map((card, index) => {
+            {cardData.map((card: any, index) => {
               const isLast = cardData.length - 1 === index;
 
               return isLast ? (
