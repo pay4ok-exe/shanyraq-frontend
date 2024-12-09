@@ -825,7 +825,7 @@ function StepApartmentDetails({
             type="text"
             value={region}
             onChange={() => {}}
-            onClick={() => setIsRegionDropdownOpen(true)} // Show dropdown on focus
+            onClick={() => setIsRegionDropdownOpen(!isRegionDropdownOpen )} // Show dropdown on focus
             placeholder="Выберите регион"
             className="w-full border-[1px] border-[#EBEBEB] rounded-[5px] px-[15px] py-[10px] text-[16px] text-[#252525] outline-none focus:outline-none focus:border-[#1aa683] placeholder:text-[#B5B7C0]"
           />
@@ -855,7 +855,7 @@ function StepApartmentDetails({
               type="text"
               value={district}
               onChange={() => {}}
-              onClick={() => setIsDistrictDropdownOpen(true)} // Show dropdown on focus
+              onClick={() => setIsDistrictDropdownOpen(!isDistrictDropdownOpen)} // Show dropdown on focus
               placeholder="Выберите район"
               className="w-full border-[1px] border-[#EBEBEB] rounded-[5px] px-[15px] py-[10px] text-[16px] text-[#252525] outline-none focus:outline-none focus:border-[#1aa683] placeholder:text-[#B5B7C0]"
             />
@@ -886,7 +886,7 @@ function StepApartmentDetails({
               type="text"
               value={microDistrict}
               onChange={() => {}}
-              onClick={() => setIsMicroDistrictDropdownOpen(true)} // Show dropdown on focus
+              onClick={() => setIsMicroDistrictDropdownOpen(!isDistrictDropdownOpen)} // Show dropdown on focus
               placeholder="Выберите микрорайон"
               className="w-full border-[1px] border-[#EBEBEB] rounded-[5px] px-[15px] py-[10px] text-[16px] text-[#252525] outline-none focus:outline-none focus:border-[#1aa683] placeholder:text-[#B5B7C0]"
             />
