@@ -44,7 +44,7 @@ const Card: React.FC<CardProps> = ({ card, isLast }) => {
         <div className="flex flex-col gap-[24px] justify-start w-full">
           <div className="flex flex-col gap-[10px] justify-start">
             <p className="text-[20px] font-normal text-[#252525] text-left">
-              {card?.title}
+              {card?.title?.length > 26 ? card?.title?.substring(0, 26) + "..." : card?.title}
             </p>
             <span className="flex ">
               <Images.Location w={"20"} h={"20"} color={"#929292"} />

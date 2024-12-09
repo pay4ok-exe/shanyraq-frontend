@@ -40,12 +40,12 @@ const HomeCard: React.FC<HomeCardProps> = ({ card }) => {
         <div className="flex flex-col gap-[16px] justify-start w-full">
           <div className="flex flex-col gap-[8px] justify-start">
             <p className="text-[16px] font-semibold text-[#252525] text-left">
-              {card.title}
+              {card?.title?.length > 22 ? card?.title?.substring(0, 22) + "..." : card?.title}
             </p>
             <span className="flex ">
               <Images.Location w={"16"} h={"16"} color={"#929292"} />
               <p className="text-[14px] font-[400] text-[#929292]  text-left">
-                {card.address}
+                {card?.address?.length > 27 ? card?.address?.substring(0, 27) + "..." : card?.address}
               </p>
             </span>
           </div>
