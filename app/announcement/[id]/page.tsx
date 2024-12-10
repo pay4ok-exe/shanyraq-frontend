@@ -50,8 +50,9 @@ const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [activeTab, setActiveTab] = useState("description"); // Default to "description"
 
-  const handleTabClick = (tab) => {
+  const handleTabClick = (tab: any) => {
     setActiveTab(tab); // Update the active tab
+    if (!tab) return;
     document.getElementById(tab).scrollIntoView({ behavior: "smooth" }); // Smooth scroll to section
   };
 
@@ -78,7 +79,7 @@ const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
   };
 
   useEffect(() => {
-    const handleKeyDown = (event) => {
+    const handleKeyDown = (event: any) => {
       if (isModalOpen) {
         if (event.key === "ArrowLeft") {
           goToPreviousImage();
