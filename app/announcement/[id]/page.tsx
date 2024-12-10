@@ -5,6 +5,8 @@ import axiosInstance from "@/axiosInstance/axios";
 import Header from "../../../components/header";
 import Footer from "../../../components/footer";
 import * as Image from "../../../public/images";
+import Skeleton from "@mui/material/Skeleton";
+import Link from "next/link";
 
 interface Announcement {
   id: number;
@@ -36,7 +38,7 @@ interface Announcement {
 }
 
 interface AnnouncementPageProps {
-  params: Promise<{ id: string }>;  
+  params: Promise<{ id: string }>;
 }
 
 const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
@@ -75,7 +77,7 @@ const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
         const response = await axiosInstance.get(`/announcement/detail/${id}`);
         setAnnouncement(response.data);
       } catch (error) {
-        console.error("Ошибка при получении объявления:", error);
+        console.log("Ошибка при получении объявления:", error);
       } finally {
         setLoading(false);
       }
@@ -86,12 +88,91 @@ const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
     }
   }, [id]);
 
+  // if (loading) {
+  //   return <div>Загрузка...</div>;
+  // }
+
   if (loading) {
-    return <div>Загрузка...</div>;
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <div className="flex-grow flex justify-center my-[30px]">
+          <div className="w-full max-w-[1300px] space-y-6">
+            {/* Skeleton for the images */}
+            <div className="grid grid-cols-4 gap-4">
+              <Skeleton
+                variant="rectangular"
+                height={500}
+                className="col-span-2 rounded-lg"
+              />
+              <div className="col-span-2 grid grid-rows-2 grid-cols-2 gap-4">
+                {Array.from({ length: 4 }).map((_, index) => (
+                  <Skeleton
+                    key={index}
+                    variant="rectangular"
+                    height="100%"
+                    className="rounded-lg"
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Skeleton for title and description */}
+            <div className="grid grid-cols-5 gap-8">
+              <div className="col-span-3 space-y-4">
+                <Skeleton variant="text" height={40} width="70%" />
+                <Skeleton variant="text" height={20} width="90%" />
+                <Skeleton
+                  variant="rectangular"
+                  height={150}
+                  className="rounded-lg"
+                />
+              </div>
+
+              {/* Skeleton for pricing and contact info */}
+              <div className="col-span-2 space-y-4">
+                <Skeleton
+                  variant="rectangular"
+                  height={200}
+                  className="rounded-lg"
+                />
+                <Skeleton
+                  variant="rectangular"
+                  height={150}
+                  className="rounded-lg"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
   }
 
   if (!announcement) {
-    return <div>Объявление не найдено</div>;
+    return (
+      <div className="flex flex-col min-h-screen">
+        {/* Header */}
+        <Header />
+
+        {/* Main Content */}
+        <div className="flex-grow flex flex-col items-center justify-center text-center space-y-4">
+          <h1 className="text-3xl font-semibold text-gray-700">Упс!</h1>
+          <p className="text-lg text-gray-600">
+            Мы не смогли найти это объявление.
+          </p>
+          <Link
+            href="/"
+            className="text-lg text-[#1AA683] underline hover:no-underline">
+            Вернуться на главную
+          </Link>
+        </div>
+
+        {/* Footer */}
+        <Footer />
+      </div>
+    );
   }
 
   return (
@@ -135,8 +216,7 @@ const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
                     />
                     <button
                       className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 text-white font-semibold rounded-lg"
-                      onClick={() => openModal(5)}
-                    >
+                      onClick={() => openModal(5)}>
                       Показать все фото
                     </button>
                   </div>
@@ -227,7 +307,8 @@ const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
 
                     <div className="text-[#4D4D4D]">Этаж:</div>
                     <div className="text-[#252525] font-semibold">
-                      {announcement.numberOfFloor} из {announcement.maxFloorInTheBuilding}
+                      {announcement.numberOfFloor} из{" "}
+                      {announcement.maxFloorInTheBuilding}
                     </div>
 
                     <div className="text-[#4D4D4D]">Площадь:</div>
@@ -258,8 +339,7 @@ const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
                     {announcement.preferences?.map((quality, index) => (
                       <li
                         key={index}
-                        className="text-[#252525] text=[16px] flex items-center space-x-2"
-                      >
+                        className="text-[#252525] text=[16px] flex items-center space-x-2">
                         <Image.marked />
                         <span>{quality}</span>
                       </li>
@@ -297,7 +377,8 @@ const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
                       Коммунальные услуги:
                     </p>
                     <p className="text-[#252525] text-[16px] leading-[20px]">
-                      {announcement.minAmountOfCommunalService} - {announcement.maxAmountOfCommunalService} тг
+                      {announcement.minAmountOfCommunalService} -{" "}
+                      {announcement.maxAmountOfCommunalService} тг
                     </p>
                   </div>
 
@@ -326,7 +407,8 @@ const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
                       />
                       <div>
                         <p className="text-[#252525] font-semibold">
-                          {announcement.user.firstName} {announcement.user.lastName}
+                          {announcement.user.firstName}{" "}
+                          {announcement.user.lastName}
                         </p>
                         <p className="text-[14px] text-[#4D4D4D]">житель</p>
                       </div>
@@ -335,15 +417,13 @@ const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
                     <div className="flex space-x-4">
                       <a
                         href={`tel:${announcement.phoneNumber}`}
-                        className="flex items-center space-x-2 px-4 py-2 rounded-lg shadow-sm text-[14px] font-semibold"
-                      >
+                        className="flex items-center space-x-2 px-4 py-2 rounded-lg shadow-sm text-[14px] font-semibold">
                         <Image.callIcon />
                         <span>{announcement.phoneNumber}</span>
                       </a>
                       <a
                         href={`https://wa.me/${announcement.phoneNumber}`}
-                        className="flex items-center space-x-2 px-4 py-2 rounded-lg shadow-sm  text-[14px] font-semibold"
-                      >
+                        className="flex items-center space-x-2 px-4 py-2 rounded-lg shadow-sm  text-[14px] font-semibold">
                         <Image.whatsappIcon />
                         <span>Написать</span>
                       </a>
@@ -388,8 +468,7 @@ const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
           <button
             className="absolute top-4 right-4 text-white text-3xl font-semibold"
-            onClick={closeModal}
-          >
+            onClick={closeModal}>
             &times;
           </button>
 
@@ -402,14 +481,12 @@ const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
 
             <button
               className="absolute left-2 top-1/2 transform -translate-y-1/2 rotate-180"
-              onClick={goToPreviousImage}
-            >
+              onClick={goToPreviousImage}>
               <img src="/right.svg" alt="previous" />
             </button>
             <button
               className="absolute right-2 top-1/2 transform -translate-y-1/2"
-              onClick={goToNextImage}
-            >
+              onClick={goToNextImage}>
               <img src="/right.svg" alt="next" />
             </button>
 

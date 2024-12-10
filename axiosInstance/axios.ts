@@ -1,9 +1,7 @@
 import axios from "axios";
 
-const baseURL = "https://shanyraqnew-production.up.railway.app/api";
-// const baseURL = "https://45dc765d1a323efcb16c1010b990f3ca.serveo.net/api";
 const axiosInstance = axios.create({
-  baseURL: baseURL, // Base URL
+  baseURL: process.env.NEXT_PUBLIC_BASE_API_URL, // Base URL
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",

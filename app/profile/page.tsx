@@ -12,11 +12,12 @@ import MenuItem from "@/components/ui/MenuItem";
 import axiosInstance from "@/axiosInstance/axios";
 import { useRouter } from "next/navigation";
 import { ProfilePhotoModal } from "@/components/profile-photo-modal";
-import { FileUpload } from "@/components/file-upload";
+import Skeleton from "@mui/material/Skeleton";
 
 export default function ProfilesPage() {
   const router = useRouter();
-
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -28,75 +29,26 @@ export default function ProfilesPage() {
     hasPassword: false,
   });
   const [isModalShow, setIsModalShow] = useState(false);
-
-  // Single state for all password fields
+  const [activeItem, setActiveItem] = useState("profile");
+  const [value, setValue] = useState(0);
+  const [isPhotoModalShow, setIsPhotoModalShow] = useState(false);
   const [passwordData, setPasswordData] = useState({
     newPassword: "",
     confirmPassword: "",
   });
-
-  // Single state for visibility toggles of each password field
   const [passwordVisibility, setPasswordVisibility] = useState({
     new: false,
     confirm: false,
   });
 
-  const openModal = () => {
-    // Reset password fields and open modal
-    setPasswordData({ newPassword: "", confirmPassword: "" });
-    setIsModalShow(true);
-  };
-
-  const closeModal = () => {
-    setIsModalShow(false);
-  };
-
-  const handlePasswordSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const { newPassword, confirmPassword } = passwordData;
-      if (newPassword !== confirmPassword) {
-        alert("Пароли не совпадают!");
-        return;
-      }
-      const response = await axiosInstance.post("/profile/add-password", {
-        password: newPassword,
-      });
-
-      console.log("Password changed successfully", response);
-      fetchProfile();
-
-      closeModal();
-    } catch (error: any) {
-      console.error(
-        "Entered incorrect password :",
-        error.response?.data?.message || error.message
-      );
-      alert(error.response?.data?.message || "Entered incorrect password!");
-    }
-    // Passwords match, handle updating formData or actual logic here
-  };
-
-  const handlePasswordChange = (
-    field: "newPassword" | "confirmPassword",
-    value: string
-  ) => {
-    setPasswordData((prev) => ({ ...prev, [field]: value }));
-  };
-  const toggleVisibility = (field: "old" | "new" | "confirm") => {
-    setPasswordVisibility((prev) => ({
-      ...prev,
-      [field]: !prev[field],
-    }));
-  };
-
   const fetchProfile = async () => {
+    setLoading(true);
+    setError("");
     try {
       const response = await axiosInstance.get("/profile");
       const data = response.data;
 
-      setFormData((prev) => ({
-        ...prev,
+      setFormData({
         firstName: data.firstName || "",
         lastName: data.lastName || "",
         email: data.email || "",
@@ -105,26 +57,25 @@ export default function ProfilesPage() {
         gender: data.gender || "",
         photo: data.profilePhoto || "",
         hasPassword: data.isPasswordHas || false,
-      }));
+      });
 
       if (!data.isPasswordHas) openModal();
-      // setValue(calculateProfileProgress(formData));
-    } catch (error: any) {
-      console.error("Failed to fetch profile:", error?.response?.data || error);
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Failed to fetch profile.");
+    } finally {
+      setLoading(false);
     }
   };
-  useEffect(() => {
-    setValue(calculateProfileProgress(formData));
-  }, [formData]);
 
   useEffect(() => {
     fetchProfile();
   }, []);
 
-  const [activeItem, setActiveItem] = useState("profile");
-  const [value, setValue] = useState(0);
-  const calculateProfileProgress = (profile: any) => {
-    console.log("Calculating profile progress with data:", profile); // Debug log
+  useEffect(() => {
+    setValue(calculateProfileProgress(formData));
+  }, [formData]);
+
+  const calculateProfileProgress = (profile) => {
     const weights = {
       firstName: 15,
       lastName: 15,
@@ -137,36 +88,73 @@ export default function ProfilesPage() {
     };
 
     let progress = 0;
-
-    if (profile.firstName && profile.firstName.trim() !== "")
-      progress += weights.firstName;
-    if (profile.lastName && profile.lastName.trim() !== "")
-      progress += weights.lastName;
-    if (profile.email && profile.email.trim() !== "") progress += weights.email;
-    if (profile.gender !== "Любой") progress += weights.gender;
-    if (profile.birthDate && profile.birthDate.trim() !== "")
-      progress += weights.birthDate;
-    if (profile.phone && profile.phone.trim() !== "") progress += weights.phone;
-    if (profile.photo && profile.photo.trim() !== "") progress += weights.photo;
-    if (profile.hasPassword) progress += weights.hasPassword;
-
-    console.log("Calculated progress:", progress); // Debug log
+    Object.keys(weights).forEach((key) => {
+      if (profile[key]) progress += weights[key];
+    });
 
     return Math.min(progress, 100);
   };
 
-  const [isPhotoModalShow, setIsPhotoModalShow] = useState(false);
-  // const [photos, setPhotos] = useState<string[]>([]);
-  const [photos, setPhotos] = useState([]);
+  const openModal = () => setIsModalShow(true);
+  const closeModal = () => setIsModalShow(false);
 
-  // Photo Modal Logic
-  const openPhotoModal = () => {
-    setIsPhotoModalShow(true);
+  const openPhotoModal = () => setIsPhotoModalShow(true);
+  const closePhotoModal = () => setIsPhotoModalShow(false);
+
+  const handlePasswordChange = (field, value) => {
+    setPasswordData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const closePhotoModal = () => {
-    setIsPhotoModalShow(false);
+  const toggleVisibility = (field) => {
+    setPasswordVisibility((prev) => ({
+      ...prev,
+      [field]: !prev[field],
+    }));
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col gap-[35px]">
+        <Header isFilterResults={true} />
+        <div className="w-full max-w-[1300px] mx-auto px-4 flex-grow mt-[35px]">
+          <Skeleton variant="rectangular" height={20} className="mb-6" />
+          <div className="flex gap-10">
+            <Skeleton
+              variant="rectangular"
+              width={300}
+              height={500}
+              className="rounded-[10px]"
+            />
+            <Skeleton
+              variant="rectangular"
+              width="100%"
+              height={500}
+              className="rounded-[10px]"
+            />
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col gap-[35px] items-center justify-center">
+        <Header isFilterResults={true} />
+        <div className="text-center">
+          <h1 className="text-xl font-bold mb-4">Error</h1>
+          <p>{error}</p>
+          <button
+            onClick={fetchProfile}
+            className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg">
+            Retry
+          </button>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col gap-[35px]">
@@ -174,7 +162,7 @@ export default function ProfilesPage() {
       <div className="w-full max-w-[1300px] mx-auto px-4 flex-grow mt-[35px]">
         <Progress value={value} />
         <div className="flex w-full gap-10 mt-[35px]">
-          <div className=" bg-white rounded-[10px] border-[1px] border-[#B5B7C0] w-[300px] max-h-[700px] sticky top-[40px]">
+          <div className="bg-white rounded-[10px] border-[1px] border-[#B5B7C0] w-[300px] max-h-[500px] sticky top-[40px]">
             <div className="flex justify-center mt-[30px]">
               <div className="w-[130px] h-[130px] rounded-full overflow-hidden relative">
                 {formData.photo ? (
@@ -188,14 +176,14 @@ export default function ProfilesPage() {
                 )}
                 <button
                   onClick={openPhotoModal}
-                  className="absolute bottom-[20px] right-[10px] bg-[#252525] p-[5px] rounded-full text-white shadow-lg ">
+                  className="absolute bottom-[20px] right-[10px] bg-[#252525] p-[5px] rounded-full text-white shadow-lg">
                   <Images.userPhotoEdit />
                 </button>
               </div>
             </div>
             <div className="flex justify-center mt-5 mb-20">
               <p className="font-circular font-medium text-[#252525] leading-[20px] tracking-[0.2px] text-left">
-                {`${formData.firstName || "user"}`}
+                {`${formData.firstName || "User"}`}
               </p>
             </div>
             <nav className="space-y-7">
@@ -210,17 +198,6 @@ export default function ProfilesPage() {
                   height={20}
                 />
               </MenuItem>
-              {/*<MenuItem*/}
-              {/*  label="Мои отклики"*/}
-              {/*  isactive={activeItem === "responses"}*/}
-              {/*  onClick={() => setActiveItem("responses")}>*/}
-              {/*  <Image*/}
-              {/*    src={"/reply.svg"}*/}
-              {/*    alt="Responses Icon"*/}
-              {/*    width={20}*/}
-              {/*    height={20}*/}
-              {/*  />*/}
-              {/*</MenuItem>*/}
               <MenuItem
                 label="Мои объявления"
                 isactive={activeItem === "my-announcements"}
@@ -232,21 +209,8 @@ export default function ProfilesPage() {
                   height={20}
                 />
               </MenuItem>
-              {/*<MenuItem*/}
-              {/*  label="Анкета"*/}
-              {/*  isactive={activeItem === "questionnaire"}*/}
-              {/*  onClick={() => setActiveItem("questionnaire")}>*/}
-              {/*  <Image*/}
-              {/*    src={"/edit.svg"}*/}
-              {/*    alt="Questionnaire Icon"*/}
-              {/*    width={20}*/}
-              {/*    height={20}*/}
-              {/*  />*/}
-              {/*</MenuItem>*/}
             </nav>
           </div>
-
-          {/* Profile Form */}
           {activeItem === "profile" && (
             <ProfilePage
               formData={formData}
@@ -254,139 +218,14 @@ export default function ProfilesPage() {
               fetchProfile={fetchProfile}
             />
           )}
-
-          {activeItem === "responses" && (
-            <div className="flex-auto bg-white rounded-[10px] border-[1px] border-[#B5B7C0] w-full p-8 h-[562px]">
-              {" "}
-            </div>
-          )}
-
           {activeItem === "my-announcements" && <MyAnnouncements />}
-
-          {activeItem === "questionnaire" && (
-            <div className="flex-auto bg-white rounded-[10px] border-[1px] border-[#B5B7C0] w-full p-8 h-[562px]  ">
-              {" "}
-            </div>
-          )}
         </div>
       </div>
-
-      {isModalShow && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
-          <form
-            onSubmit={handlePasswordSubmit}
-            className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-            <h2 className="text-lg font-semibold mb-6 text-[#252525]">
-              Добавьте свой пароль
-            </h2>
-
-            {/* Новый пароль */}
-            <div className="relative mb-[20px]">
-              <input
-                type={!passwordVisibility.new ? "text" : "password"}
-                id="newPassword"
-                value={passwordData.newPassword}
-                onChange={(e) =>
-                  handlePasswordChange("newPassword", e.target.value)
-                }
-                required
-                placeholder=""
-                className="peer w-full px-3 py-[8px] text-[20px] font-normal text-left text-gray-900 border border-gray-300 rounded-lg placeholder-transparent focus:outline-none focus:border-[#1AA683]"
-              />
-              <label
-                htmlFor="newPassword"
-                className={`absolute left-3 bg-white text-gray-400 font-normal transition-all peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-gray-500 peer-placeholder-shown:text-sm peer-focus:top-[-7px] peer-focus:px-[4px] peer-focus:text-xs peer-focus:text-[#1AA683] ${
-                  passwordData.newPassword
-                    ? "top-[-7px] px-[4px] text-xs"
-                    : "text-[20px]"
-                }`}>
-                Новый пароль
-              </label>
-              <button
-                className="absolute right-4 bottom-3 cursor-pointer"
-                type="button"
-                disabled={!passwordData.newPassword}
-                onClick={() => toggleVisibility("new")}>
-                {!passwordVisibility.new ? (
-                  <Images.eyeOn
-                    className="w-[20px] h-[20px]"
-                    color={`${passwordData.newPassword ? "#1AA683" : "gray"}`}
-                  />
-                ) : (
-                  <Images.eyeOff
-                    className="w-[20px] h-[20px]"
-                    color={`${passwordData.newPassword ? "#1AA683" : "gray"}`}
-                  />
-                )}
-              </button>
-            </div>
-
-            {/* Подтвердите пароль */}
-            <div className="relative mb-[20px]">
-              <input
-                type={!passwordVisibility.confirm ? "text" : "password"}
-                id="confirmPassword"
-                value={passwordData.confirmPassword}
-                onChange={(e) =>
-                  handlePasswordChange("confirmPassword", e.target.value)
-                }
-                required
-                placeholder=""
-                className="peer w-full px-3 py-[8px] text-[20px] font-normal text-left text-gray-900 border border-gray-300 rounded-lg placeholder-transparent focus:outline-none focus:border-[#1AA683]"
-              />
-              <label
-                htmlFor="confirmPassword"
-                className={`absolute left-3 bg-white text-gray-400 font-normal transition-all peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-gray-500 peer-placeholder-shown:text-sm peer-focus:top-[-7px] peer-focus:px-[4px] peer-focus:text-xs peer-focus:text-[#1AA683] ${
-                  passwordData.confirmPassword
-                    ? "top-[-7px] px-[4px] text-xs"
-                    : "text-[20px]"
-                }`}>
-                Подтвердите пароль
-              </label>
-              <button
-                className="absolute right-4 bottom-3 cursor-pointer"
-                type="button"
-                disabled={!passwordData.confirmPassword}
-                onClick={() => toggleVisibility("confirm")}>
-                {!passwordVisibility.confirm ? (
-                  <Images.eyeOn
-                    className="w-[20px] h-[20px]"
-                    color={`${
-                      passwordData.confirmPassword ? "#1AA683" : "gray"
-                    }`}
-                  />
-                ) : (
-                  <Images.eyeOff
-                    className="w-[20px] h-[20px]"
-                    color={`${passwordVisibility.confirm ? "#1AA683" : "gray"}`}
-                  />
-                )}
-              </button>
-            </div>
-
-            <div className="flex flex-col items-center gap-4">
-              <button
-                type="submit"
-                className="bg-[#1aa683] text-white px-6 py-2 rounded-lg hover:bg-[#158f72] w-full text-center">
-                Подтвердить
-              </button>
-              <button
-                type="button"
-                onClick={closeModal}
-                className="text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-100 w-full text-center">
-                Отменить
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
-
       <ProfilePhotoModal
         isPhotoModalShow={isPhotoModalShow}
         closePhotoModal={closePhotoModal}
         setFormData={setFormData}
       />
-
       <Footer />
     </div>
   );

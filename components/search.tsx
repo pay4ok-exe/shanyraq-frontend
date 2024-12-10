@@ -84,8 +84,8 @@ const Search = () => {
   };
 
   const genders = [
-    { id: 1, name: "Мужской" },
-    { id: 2, name: "Женский" },
+    { id: 1, name: "Мужчина" },
+    { id: 2, name: "Женщина" },
   ];
 
   const housematesCount = [

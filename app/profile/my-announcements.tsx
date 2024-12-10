@@ -2,14 +2,17 @@ import React, { useEffect, useState } from "react";
 import Card from "@/app/profile/Card";
 import axiosInstance from "@/axiosInstance/axios";
 import { useModal } from "@/app/context/modal-context";
+import Skeleton from "@mui/material/Skeleton";
 
 const MyAnnouncements = () => {
   const [activeButton, setActiveButton] = useState<"active" | "archived">(
     "active"
   );
   const [announcements, setAnnouncements] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchAllAnnouncements = async () => {
+    setLoading(true);
     try {
       const endpoint =
         activeButton === "active"
@@ -17,9 +20,7 @@ const MyAnnouncements = () => {
           : "/announcement/my-archive-announcements";
 
       const response = await axiosInstance.get(endpoint);
-      console.log(activeButton === "active");
 
-      // Assuming response.data is an array of announcements
       setAnnouncements(response.data || []);
     } catch (error: any) {
       console.error(
@@ -27,25 +28,16 @@ const MyAnnouncements = () => {
         error.response?.data?.message || error.message
       );
       alert(error.response?.data?.message || "Failed to fetch announcements");
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleArchieve = async (id: number) => {
     try {
-      const response = await axiosInstance.post(
-        `/announcement/archive-announcement/${id}`
-      );
-      console.log("Archive response:", response.data); // Log success response
-
-      // Assuming the API returns success or updated announcements, update the state
+      await axiosInstance.post(`/announcement/archive-announcement/${id}`);
       alert("Announcement archived successfully!");
-
-      // Optional: Update announcements state if necessary
-      setAnnouncements((prevAnnouncements) =>
-        prevAnnouncements.filter(
-          (announcement) => announcement.announcementId !== id
-        )
-      );
+      fetchAllAnnouncements(); // Refresh the list
     } catch (error: any) {
       console.error(
         "Error archiving announcement:",
@@ -59,20 +51,9 @@ const MyAnnouncements = () => {
 
   const handleRestore = async (id: number) => {
     try {
-      const response = await axiosInstance.post(
-        `/announcement/restore-announcement/${id}`
-      );
-      console.log("Restore response:", response.data); // Log success response
-
-      // Assuming the API returns success or updated announcements, update the state
+      await axiosInstance.post(`/announcement/restore-announcement/${id}`);
       alert("Announcement restored successfully!");
-
-      // Optional: Update announcements state if necessary
-      setAnnouncements((prevAnnouncements) =>
-        prevAnnouncements.filter(
-          (announcement) => announcement.announcementId !== id
-        )
-      );
+      fetchAllAnnouncements(); // Refresh the list
     } catch (error: any) {
       console.error(
         "Error restoring announcement:",
@@ -83,22 +64,12 @@ const MyAnnouncements = () => {
       );
     }
   };
+
   const handleDelete = async (id: number) => {
     try {
-      const response = await axiosInstance.delete(
-        `/announcement/delete-announcement/${id}`
-      );
-      console.log("Delete response:", response.data); // Log success response
-
-      // Assuming the API returns success or updated announcements, update the state
+      await axiosInstance.delete(`/announcement/delete-announcement/${id}`);
       alert("Announcement deleted successfully!");
-
-      // Optional: Update announcements state if necessary
-      setAnnouncements((prevAnnouncements) =>
-        prevAnnouncements.filter(
-          (announcement) => announcement.announcementId !== id
-        )
-      );
+      fetchAllAnnouncements(); // Refresh the list
     } catch (error: any) {
       console.error(
         "Error deleting announcement:",
@@ -114,9 +85,7 @@ const MyAnnouncements = () => {
   const handleEdit = async (id: number) => {
     try {
       const response = await axiosInstance.get(`/announcement/detail/${id}`);
-      // console.log("Detail response:", response.data);
       const announcementData = response.data;
-      // console.log(announcementData);
       sessionStorage.setItem(
         `announcement_details`,
         JSON.stringify(announcementData)
@@ -139,14 +108,9 @@ const MyAnnouncements = () => {
     fetchAllAnnouncements();
   }, [activeButton]);
 
-  const handleShareClick = () => {
-    console.log("Share clicked!");
-  };
-
   return (
-    <div className="flex-auto bg-white rounded-[10px] border-[1px] border-[#B5B7C0] w-full p-8">
+    <div className="flex-auto bg-white rounded-[10px] border-[1px] border-[#B5B7C0] w-full p-8 min-h-[562px]">
       <div className="flex justify-start mb-10">
-        {/* Active Button */}
         <button
           className={`${
             activeButton === "active"
@@ -157,7 +121,6 @@ const MyAnnouncements = () => {
           Активные
         </button>
 
-        {/* Archived Button */}
         <button
           className={`${
             activeButton === "archived"
@@ -169,20 +132,28 @@ const MyAnnouncements = () => {
         </button>
       </div>
 
-      {/* Display announcements based on the active button */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {announcements &&
-          announcements.map((announcement: any) => (
-            <Card
-              key={announcement.announcementId}
-              card={announcement}
-              handleArchieve={handleArchieve}
-              handleRestore={handleRestore}
-              handleDelete={handleDelete}
-              handleEdit={handleEdit}
-              isArchieved={activeButton === "active"}
-            />
-          ))}
+        {loading
+          ? Array.from({ length: 6 }).map((_, index) => (
+              <Skeleton
+                key={index}
+                variant="rectangular"
+                width="100%"
+                height={200}
+                className="rounded-lg"
+              />
+            ))
+          : announcements.map((announcement: any) => (
+              <Card
+                key={announcement.announcementId}
+                card={announcement}
+                handleArchieve={handleArchieve}
+                handleRestore={handleRestore}
+                handleDelete={handleDelete}
+                handleEdit={handleEdit}
+                isArchieved={activeButton === "archived"}
+              />
+            ))}
       </div>
     </div>
   );

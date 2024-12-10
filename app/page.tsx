@@ -11,6 +11,7 @@ import Card from "@/components/card";
 import HomeCard from "@/components/home-card";
 import { useRouter, useSearchParams } from "next/navigation";
 import Map from "@/components/Map";
+import Skeleton from "@mui/material/Skeleton";
 
 const sortMapping = {
   "Самые подходящие": 1,
@@ -28,6 +29,7 @@ export default function Home() {
   const [selectedSort, setSelectedSort] = useState<string>("Самые подходящие");
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState<boolean>(false);
   const [isMapDropdownOpen, setMapDropdownOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
 
   const handleFilterSubmit = (queryObject: any) => {
     setQuery(queryObject);
@@ -37,20 +39,18 @@ export default function Home() {
 
   const fetchAllAnnouncements = async (filters) => {
     try {
+      setLoading(true);
       // Determine the endpoint dynamically based on viewType
       const endpoint =
         filters.viewType === "lists"
           ? "/announcement/all"
           : "/announcement/all-for-map";
 
-      console.log("Fetching announcements with filters:", filters);
-
       // Fetch data from the API with the constructed filters
       const response = await axiosInstance.get(endpoint, { params: filters });
 
       // Update announcements state
       setAnnouncements(response.data || []);
-      console.log("Fetched announcements:", response.data);
       setErrorMessage(""); // Clear any previous error messages
     } catch (error) {
       console.error(
@@ -62,6 +62,8 @@ export default function Home() {
       setErrorMessage(
         error.response?.data?.message || "Failed to fetch announcements"
       );
+    } finally {
+      setLoading(false); // End loading
     }
   };
 
@@ -82,8 +84,6 @@ export default function Home() {
       sort: sortMapping[selectedSort] || 1, // Default sort if undefined
       viewType, // Add viewType dynamically
     };
-
-    console.log("Constructed filters:", filters);
 
     // Update the query string in the URL
     const updatedParams = {
@@ -160,6 +160,48 @@ export default function Home() {
   const handleFilterVisibility = () => {
     setFilterVisible(!isFilterVisible); // Toggle filter visibility
   };
+
+  const renderSkeletonCard = () => (
+    <div className="relative">
+      <div
+        className="min-h-[345px] min-w-[267px] rounded-[10px] p-[16px] gap-[26px] bg-white flex flex-col justify-between items-start"
+        style={{ boxShadow: "0px 4px 10px 0px rgba(0, 0, 0, 0.2)" }}>
+        {/* Skeleton for image */}
+        <Skeleton
+          variant="rectangular"
+          width={240}
+          height={130}
+          style={{ borderRadius: "10px" }}
+        />
+
+        <div className="flex flex-col gap-[16px] justify-start w-full">
+          <div className="flex flex-col gap-[8px] justify-start">
+            {/* Skeleton for title */}
+            <Skeleton variant="text" width="80%" height={24} />
+            <span className="flex">
+              <Skeleton variant="text" width="60%" height={16} />
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} className="flex flex-col items-center gap-[4px]">
+                <Skeleton variant="circular" width={14} height={14} />
+                <Skeleton variant="text" width={40} height={16} />
+              </div>
+            ))}
+          </div>
+
+          {/* Skeleton for price */}
+          <Skeleton variant="text" width="50%" height={20} />
+
+          {/* Skeleton for action link */}
+          <Skeleton variant="text" width="30%" height={16} />
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="min-h-full min-w-full space-y-[40px]">
       <Header isFilterResults={false} />
@@ -254,7 +296,7 @@ export default function Home() {
                   <Images.map />
                 </button>
               </div>
-              <div className="flex justify-center">
+              {/* <div className="flex justify-center">
                 {announcements && announcements.length > 0 && (
                   <div className="grid grid-cols-3 gap-4">
                     {announcements.map((announcement: any, index: number) => (
@@ -266,6 +308,20 @@ export default function Home() {
                     ))}
                   </div>
                 )}
+              </div> */}
+              <div className="flex justify-center">
+                <div className="grid grid-cols-3 gap-4">
+                  {loading
+                    ? Array.from({ length: 6 }).map((_, index) => (
+                        <div key={index}>{renderSkeletonCard()}</div>
+                      ))
+                    : announcements.map((announcement) => (
+                        <HomeCard
+                          key={announcement.announcementId}
+                          card={announcement}
+                        />
+                      ))}
+                </div>
               </div>
             </div>
           </div>

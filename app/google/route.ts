@@ -3,7 +3,7 @@
 import axios from "axios";
 
 const serverAxios = axios.create({
-  baseURL: "https://shanyraqnew-production.up.railway.app/api", // Your backend URL
+  baseURL: process.env.NEXT_PUBLIC_BASE_API_URL,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",

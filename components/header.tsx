@@ -566,6 +566,7 @@ const Header: React.FC<HeaderProps> = ({ isFilterResults }) => {
               <div className="relative">
                 <button
                   className="flex items-center space-x-2 px-[9px] h-[50px] rounded border border-[#1aa683]"
+                  onBlur={() => setDropdownOpen(false)}
                   onClick={() => setDropdownOpen(!dropdownOpen)}>
                   <Images.UserIcon className="w-[32px] h-[32px]" />
                 </button>

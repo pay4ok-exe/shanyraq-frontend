@@ -5,8 +5,7 @@ import supercluster from "supercluster";
 
 const Map = ({ announcements }) => {
   // Set the Mapbox Access Token
-  mapboxgl.accessToken =
-    "pk.eyJ1IjoibWVpcm1hbi1pcy1yZWF0b3IiLCJhIjoiY2x5NjVpaWNlMDVneDJ0c2F6cTVxNzZqNSJ9.WVkGzQEf4yJGjr98WSgzpA";
+  mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
   const mapContainer = useRef(null);
   const map = useRef(null);
