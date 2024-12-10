@@ -315,7 +315,9 @@ export default function Home() {
                     ? Array.from({ length: 6 }).map((_, index) => (
                         <div key={index}>{renderSkeletonCard()}</div>
                       ))
-                    : announcements.map((announcement) => (
+                    : announcements &&
+                      announcements.length > 0 &&
+                      announcements.map((announcement) => (
                         <HomeCard
                           key={announcement.announcementId}
                           card={announcement}
