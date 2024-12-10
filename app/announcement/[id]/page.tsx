@@ -48,7 +48,7 @@ const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [activeTab, setActiveTab] = useState("description"); // Default to "description"
+  const [activeTab, setActiveTab] = useState("description"); // Default to "description"  
 
   const handleTabClick = (tab: any) => {
     setActiveTab(tab); // Update the active tab
