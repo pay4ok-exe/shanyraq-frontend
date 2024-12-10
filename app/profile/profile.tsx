@@ -145,7 +145,7 @@ export default function ProfilePage({ formData, setFormData, fetchProfile }) {
       alert(error.response?.data || "Entered incorrect Profile datas!");
     }
     // Process form data
-    console.log("Form Submitted:", formData);
+    // console.log("Form Submitted:", formData);
     setIsEditing(false);
   };
 

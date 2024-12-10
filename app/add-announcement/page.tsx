@@ -113,7 +113,7 @@ const AddAnnouncementModal = () => {
 
   const handleSubmit = async (isEditing: any) => {
     try {
-      console.log("Form data before submission:", formData);
+      // console.log("Form data before submission:", formData);
       // Prepare the data for the POST request based on the formData
       if (!isEditing) {
         const requestData = {
@@ -205,7 +205,7 @@ const AddAnnouncementModal = () => {
 
         // Send the data to the server
 
-        console.log(isEditingId);
+        // console.log(isEditingId);
         const response = await axiosInstance.put(
           `/announcement/update/${Number(isEditingId)}`,
           requestData
