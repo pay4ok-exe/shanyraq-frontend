@@ -11,8 +11,8 @@ const Progress = ({ value }) => {
             {value}%
           </p>
           <p className="text-sm font-normal leading-[17.5px] text-left text-[#25252580]">
-            Заполните полностью профиль и получите доступ к функции "Поделиться
-            профилем"
+            Заполните полностью профиль и получите доступ к функции
+            &quot;Поделиться профилем&quot;
           </p>
         </div>
         <div className="w-full h-2 bg-[#EBEBEB] rounded-full">

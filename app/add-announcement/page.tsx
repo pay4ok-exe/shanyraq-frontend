@@ -160,6 +160,7 @@ const AddAnnouncementModal = () => {
           "/announcement/create",
           requestData
         );
+        console.log(response);
 
         // Handle successful response
         alert("Announcement created successfully");

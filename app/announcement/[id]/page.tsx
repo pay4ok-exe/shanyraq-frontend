@@ -288,33 +288,30 @@ const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
               <div>
                 <nav className="flex space-x-[24px] font-circular text-[16px] text-[#B5B7C0] leading-[20px]">
                   <button
-                      onClick={() => handleTabClick("description")}
-                      className={`${
-                          activeTab === "description"
-                              ? "font-semibold border-b border-[#1AA683] text-[#1AA683]"
-                              : ""
-                      }`}
-                  >
+                    onClick={() => handleTabClick("description")}
+                    className={`${
+                      activeTab === "description"
+                        ? "font-semibold border-b border-[#1AA683] text-[#1AA683]"
+                        : ""
+                    }`}>
                     Описание
                   </button>
                   <button
-                      onClick={() => handleTabClick("information")}
-                      className={`${
-                          activeTab === "information"
-                              ? "font-semibold border-b border-[#1AA683] text-[#1AA683]"
-                              : ""
-                      }`}
-                  >
+                    onClick={() => handleTabClick("information")}
+                    className={`${
+                      activeTab === "information"
+                        ? "font-semibold border-b border-[#1AA683] text-[#1AA683]"
+                        : ""
+                    }`}>
                     Информация
                   </button>
                   <button
-                      onClick={() => handleTabClick("qualities")}
-                      className={`${
-                          activeTab === "qualities"
-                              ? "font-semibold border-b border-[#1AA683] text-[#1AA683]"
-                              : ""
-                      }`}
-                  >
+                    onClick={() => handleTabClick("qualities")}
+                    className={`${
+                      activeTab === "qualities"
+                        ? "font-semibold border-b border-[#1AA683] text-[#1AA683]"
+                        : ""
+                    }`}>
                     Качества
                   </button>
                 </nav>
