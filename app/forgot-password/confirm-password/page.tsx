@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import * as Image from "../../../public/images";
 import Header from "@/components/header";
 import axiosInstance from "@/axiosInstance/axios";
@@ -12,12 +12,16 @@ const RegisterPage = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [isErrorPassword, setIsErrorPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
 
     if (password !== confirmPassword) {
-      alert("The Passwords are not same");
+        setIsErrorPassword(true);
       return;
     }
     const email = localStorage.getItem("email");
@@ -30,7 +34,9 @@ const RegisterPage = () => {
       localStorage.removeItem("email");
       router.push("/login");
     } catch (error: any) {
-      console.error("Verification failed:", error);
+      setIsError(error.response.data);
+    } finally {
+        setIsLoading(false);
     }
   };
   const handleBackClick = () => {
@@ -43,18 +49,39 @@ const RegisterPage = () => {
     }
   };
 
+  useEffect(() => {
+    if (isError) {
+      const timer = setTimeout(() => setIsError(null), 5000); // Clear error after 5 seconds
+      return () => clearTimeout(timer); // Cleanup the timer on component unmount
+    }
+    if (isErrorPassword) {
+      const timer = setTimeout(() => setIsErrorPassword(false), 5000); // Clear error after 5 seconds
+      return () => clearTimeout(timer); // Cleanup the timer on component unmount
+    }
+  }, [isError, isErrorPassword]);
+
   return (
     <div className="min-h-full min-w-full space-y-[90px]">
       <Header />
       <div className="w-[1440px] mx-auto flex justify-center items-center">
         <div className="border-[#D6D6D6] border rounded-lg p-8 px-[110px] py-[120px]">
           <div className="w-[500px] flex flex-col items-center">
-            <h1 className="w-full mb-3 font-circular text-[32px] font-bold leading-[40px] text">
+            <h1 className="w-full text-center mb-3 font-circular text-[32px] font-bold leading-[40px] text">
               Восстановление пароля
             </h1>
             <p className="font-circular text-[16px] font-normal leading-[20px]">
               Пожалуйста, установите новый пароль для своей учетной записи.
             </p>
+            {isError && (
+                <div className="mt-4 text-center w-full text-red-500 text-lg">
+                    {isError}
+                </div>
+            )}
+            {isErrorPassword && (
+                <div className="mt-4 text-center w-full text-red-500 text-lg">
+                    Пароли не совпадают
+                </div>
+            )}
             <form onSubmit={handleSubmit} className="w-full mt-[36px]">
               {/* Password Input */}
               <div className="relative mb-[20px]">
@@ -134,9 +161,10 @@ const RegisterPage = () => {
 
               {/* Submit Button */}
               <button
+                disabled={isLoading}
                 type="submit"
                 className="w-full font-circular font-bold text-[20px] bg-[#1AA683] text-white py-[10px] rounded-lg hover:bg-[#1aa683df] focus:outline-none transition">
-                Продолжить
+                {isLoading ? "Отправка..." : "Подтвердить"}
               </button>
 
               {/* Back Button */}

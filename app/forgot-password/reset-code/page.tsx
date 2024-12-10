@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, {useState, useRef, useEffect} from "react";
 import Header from "@/components/header";
 import axiosInstance from "@/axiosInstance/axios";
 import Footer from "@/components/footer";
@@ -8,38 +8,71 @@ import { useRouter } from "next/navigation";
 
 const ResetCodePage = () => {
   const [code, setCode] = useState<string[]>(new Array(6).fill(""));
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const inputs = useRef<HTMLInputElement[]>([]);
   const router = useRouter();
+  const [delay, setDelay] = useState(0); // Delay time in seconds
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     const email = localStorage.getItem("email");
     const codeString = code.join("");
     try {
-      const response = await axiosInstance.post("/auth/forgot-password", {
+      const response = await axiosInstance.post("/auth/verify-code", {
         email,
         code: codeString,
       });
 
       router.push("/forgot-password/confirm-password");
     } catch (error: any) {
-      console.error("Verification failed:", error);
+      setIsError(error.response.data);
+      console.log(error.response.data)
+    } finally {
+        setIsLoading(false);
     }
   };
 
   const resend = async (e: React.FormEvent) => {
     e.preventDefault();
     const email = localStorage.getItem("email");
-    try {
-      const response = await axiosInstance.post("/auth/resendCode", {
-        email,
-      });
+    if (!email) {
+      alert("Email not found");
+      return;
+    }
 
-      alert("Resends the Code to your Email");
+    try {
+      await axiosInstance.post("/auth/resendCode", { email });
+      setIsSuccess(true);
+
+      // Start the countdown
+      setDelay(60); // Set delay time in seconds
     } catch (error: any) {
-      console.error("Verification failed:", error);
+      setIsError(error.response.data);
     }
   };
+
+  useEffect(() => {
+    if (isError) {
+      const timer = setTimeout(() => setIsError(null), 5000); // Clear error after 5 seconds
+      return () => clearTimeout(timer); // Cleanup the timer on component unmount
+    }
+
+    if (isSuccess) {
+      const timer = setTimeout(() => setIsSuccess(null), 5000); // Clear success message after 5 seconds
+      return () => clearTimeout(timer); // Cleanup the timer on component unmount
+    }
+  }, [isError, isSuccess]);
+
+  // Countdown effect
+  useEffect(() => {
+    if (delay > 0) {
+      const timer = setTimeout(() => setDelay((prev) => prev - 1), 1000);
+      return () => clearTimeout(timer); // Clear timeout on component unmount
+    }
+  }, [delay]);
 
   const processInput = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -86,6 +119,12 @@ const ResetCodePage = () => {
               Пожалуйста, введите 6-значный код, отправленный на ваш электронный
               адрес.
             </p>
+            {isError && (
+                <div className="mt-4 text-center w-full text-red-500 text-lg">{isError}</div>
+            )}
+            {isSuccess && (
+                <div className="mt-4 text-center w-full text-green-500 text-lg">Код отправлен повторно</div>
+            )}
             <form onSubmit={handleSubmit} className="w-full ">
               {/* Reset Code Input */}
               <div className="flex justify-between mt-[36px] mb-[20px]">
@@ -107,17 +146,20 @@ const ResetCodePage = () => {
 
               {/* Submit Button */}
               <button
+                disabled={isLoading}
                 type="submit"
                 className="mb-3 w-full font-circular font-semibold text-[20px] bg-[#1AA683] text-white py-[10px] rounded-lg hover:bg-[#1aa683df] focus:outline-none transition">
-                Потвердить
+                {isLoading ? "Отправка..." : "Подтвердить"}
               </button>
 
               {/* Back Button */}
               <button
-                type="button"
-                className="w-full font-circular font-semibold text-[16px] py-[20px] rounded-lg"
-                onClick={resend}>
-                Отправить код повторно
+                  type="button"
+                  className="w-full font-circular font-semibold text-[16px] py-[20px] rounded-lg border-black border-1"
+                  onClick={resend}
+                  disabled={delay > 0} // Disable button during countdown
+              >
+                {delay > 0 ? `Повторить можно через ${delay} сек.` : "Отправить код повторно"}
               </button>
             </form>
           </div>

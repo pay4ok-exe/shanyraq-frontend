@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import axiosInstance from "@/axiosInstance/axios";
@@ -8,22 +8,34 @@ import { useRouter } from "next/navigation";
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
+  const [isError, setIsError] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    if (isError) {
+      const timer = setTimeout(() => setIsError(null), 5000); // Clear error after 5 seconds
+      return () => clearTimeout(timer); // Cleanup the timer on component unmount
+    }
+  }, [isError]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
         const response = await axiosInstance.post("/auth/forgot-password", {
           email
         });
-  
-        localStorage.setItem("email", email); 
+
+        localStorage.setItem("email", email);
         router.push("/forgot-password/reset-code");
-        
+
       }catch (error: any) {
-        console.error("Verification failed:", error);
-      }
+        setIsError(error.response.data);
+      } finally {
+        setLoading(false);
+    }
   };
 
   return (
@@ -39,6 +51,9 @@ const ForgotPasswordPage = () => {
               Не волнуйтесь, такое случается со всеми нами. Введите свой адрес
               электронной почты ниже, чтобы восстановить пароль
             </p>
+            {isError && (
+                <div className="mt-4 text-left w-full text-red-500 text-lg">{isError}</div>
+            )}
             <form onSubmit={handleSubmit} className="w-full mt-[36px]">
               {/* Email Input */}
               <div className="relative mb-[20px]">
@@ -64,9 +79,10 @@ const ForgotPasswordPage = () => {
 
               {/* Submit Button */}
               <button
+                  disabled={loading}
                 type="submit"
                 className="mb-3 w-full font-circular font-semibold text-[20px] bg-[#1AA683] text-white py-[10px] rounded-lg hover:bg-[#1aa683df] focus:outline-none transition">
-                Продолжить
+                {loading ? "Отправка..." : "Отправить"}
               </button>
 
               {/* Back Button */}

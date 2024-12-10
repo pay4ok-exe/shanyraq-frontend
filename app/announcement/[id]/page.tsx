@@ -48,6 +48,12 @@ const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [activeTab, setActiveTab] = useState("description"); // Default to "description"
+
+  const handleTabClick = (tab) => {
+    setActiveTab(tab); // Update the active tab
+    document.getElementById(tab).scrollIntoView({ behavior: "smooth" }); // Smooth scroll to section
+  };
 
   // Функции для модального окна
   const openModal = (index: number) => {
@@ -70,6 +76,25 @@ const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
       prevIndex === (announcement?.photos.length || 1) - 1 ? 0 : prevIndex + 1
     );
   };
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (isModalOpen) {
+        if (event.key === "ArrowLeft") {
+          goToPreviousImage();
+        } else if (event.key === "ArrowRight") {
+          goToNextImage();
+        } else if (event.key === "Escape") {
+          closeModal(); // Close modal on Escape key
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isModalOpen, goToPreviousImage, goToNextImage, closeModal]);
 
   useEffect(() => {
     const fetchAnnouncement = async () => {
@@ -262,18 +287,42 @@ const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
               </div>
               <div>
                 <nav className="flex space-x-[24px] font-circular text-[16px] text-[#B5B7C0] leading-[20px]">
-                  <a className="font-semibold border-b border-[#1AA683] text-[#1AA683]">
+                  <button
+                      onClick={() => handleTabClick("description")}
+                      className={`${
+                          activeTab === "description"
+                              ? "font-semibold border-b border-[#1AA683] text-[#1AA683]"
+                              : ""
+                      }`}
+                  >
                     Описание
-                  </a>
-                  <a>Информация</a>
-                  {/*<a>Цена</a>*/}
-                  <a>Качества</a>
+                  </button>
+                  <button
+                      onClick={() => handleTabClick("information")}
+                      className={`${
+                          activeTab === "information"
+                              ? "font-semibold border-b border-[#1AA683] text-[#1AA683]"
+                              : ""
+                      }`}
+                  >
+                    Информация
+                  </button>
+                  <button
+                      onClick={() => handleTabClick("qualities")}
+                      className={`${
+                          activeTab === "qualities"
+                              ? "font-semibold border-b border-[#1AA683] text-[#1AA683]"
+                              : ""
+                      }`}
+                  >
+                    Качества
+                  </button>
                 </nav>
               </div>
 
               <div className="w-4/5 mt-[30px] flex flex-col space-y-10">
                 {/* Description */}
-                <div className="space-y-4">
+                <div id="description" className="space-y-4">
                   <h2 className="font-circular text-[24px] font-semibold">
                     Описание
                   </h2>
@@ -286,7 +335,7 @@ const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
                 </div>
 
                 {/* Information */}
-                <div className="space-y-4">
+                <div id="information" className="space-y-4">
                   <h2 className="font-circular text-[24px] font-semibold">
                     Информация
                   </h2>
@@ -331,7 +380,7 @@ const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
                 </div>
 
                 {/* Qualities */}
-                <div className="col-span-3 mt-8">
+                <div id="qualities" className="col-span-3 mt-8">
                   <h2 className="font-circular text-[24px] font-semibold">
                     Качества
                   </h2>

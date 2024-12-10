@@ -58,7 +58,11 @@ const Card: React.FC<CardProps> = ({
       <Link href={`/announcement/${card?.announcementId}`}>
         {/* Title and Location */}
         <div className="flex flex-col mb-4">
-          <h3 className="text-xl font-semibold text-gray-900">{card?.title}</h3>
+          <h3 className="text-xl font-semibold text-gray-900">
+            {card?.title.length > 18
+              ? card?.title.substring(0, 18) + "..."
+              : card?.title}
+          </h3>
           <div className="flex items-center text-sm text-gray-600 mt-2 gap-2">
             <Image
               src={"/location.svg"}
@@ -67,7 +71,11 @@ const Card: React.FC<CardProps> = ({
               height={12}
               className="opacity-50"
             />
-            <span>{card?.address}</span>
+            <span>
+                {card?.address.length > 27
+                    ? card?.address.substring(0, 27) + "..."
+                    : card?.address}
+            </span>
           </div>
         </div>
 
