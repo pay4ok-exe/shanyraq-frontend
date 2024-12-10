@@ -151,7 +151,7 @@ const MyAnnouncements = () => {
                 handleRestore={handleRestore}
                 handleDelete={handleDelete}
                 handleEdit={handleEdit}
-                isArchieved={activeButton === "archived"}
+                isArchieved={activeButton !== "archived"}
               />
             ))}
       </div>

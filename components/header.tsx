@@ -566,20 +566,23 @@ const Header: React.FC<HeaderProps> = ({ isFilterResults }) => {
               <div className="relative">
                 <button
                   className="flex items-center space-x-2 px-[9px] h-[50px] rounded border border-[#1aa683]"
-                  onBlur={() => setDropdownOpen(false)}
-                  onClick={() => setDropdownOpen(!dropdownOpen)}>
+                  onClick={() => setDropdownOpen((prev) => !prev)}>
                   <Images.UserIcon className="w-[32px] h-[32px]" />
                 </button>
                 {/* Dropdown Menu */}
                 {dropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-20">
+                  <div
+                    className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-20"
+                    onClick={(e) => e.stopPropagation()}>
                     <Link
                       href={`${isAuth ? "/profile" : "login"}`}
+                      onClick={() => setDropdownOpen(false)}
                       className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
                       Мой профиль
                     </Link>
                     <Link
                       href="/login"
+                      onClick={() => setDropdownOpen(false)}
                       className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">
                       Выйти
                     </Link>

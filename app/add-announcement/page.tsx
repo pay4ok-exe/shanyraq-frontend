@@ -109,10 +109,7 @@ const AddAnnouncementModal = () => {
     }
   }, []);
 
-  useEffect(() => {
-    console.log("Updated formData:", formData);
-    console.log(isEditingId);
-  }, [formData]);
+  useEffect(() => {}, [formData]);
 
   const handleSubmit = async (isEditing: any) => {
     try {
@@ -320,6 +317,44 @@ const AddAnnouncementModal = () => {
     return parsedDate.toISOString().split("T")[0]; // Formats as "YYYY-MM-DD"
   };
 
+  const closeModalHandle = () => {
+    setFormData({
+      role: "Я житель",
+      title: "",
+      gender: "",
+      roommates: 1,
+      peopleInApartment: 0,
+      region: "",
+      district: "",
+      microDistrict: "",
+      address: "",
+      moveInDate: "",
+      monthlyPayment: "",
+      livingInHome: true,
+      ageRange: [18, 50],
+      deposit: false,
+      depositAmount: 0,
+      apartmentDetails: {
+        petsAllowed: false,
+        utilitiesIncluded: false,
+        utilitiesAmount: [0, 5000],
+        forStudents: false,
+        badHabitsAllowed: false,
+        description: "",
+        photos: [],
+        rooms: "1",
+        propertyType: "",
+        floorsFrom: 1,
+        floorsTo: 3,
+        ownerPhone: "",
+        longTerm: false,
+        roomSize: 0,
+      },
+      selectedAdjectives: [],
+    });
+    closeModal();
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center bg-black bg-opacity-60 ">
       {/* Modal Content */}
@@ -328,7 +363,7 @@ const AddAnnouncementModal = () => {
           className="absolute top-4 right-4 text-gray-600 hover:text-gray-900 text-2xl"
           onClick={() => {
             if (currentStep === 6) handleSubmit(isEditing);
-            closeModal();
+            closeModalHandle();
           }}>
           <Images.close />
         </button>
@@ -825,7 +860,7 @@ function StepApartmentDetails({
             type="text"
             value={region}
             onChange={() => {}}
-            onClick={() => setIsRegionDropdownOpen(!isRegionDropdownOpen )} // Show dropdown on focus
+            onClick={() => setIsRegionDropdownOpen(!isRegionDropdownOpen)} // Show dropdown on focus
             placeholder="Выберите регион"
             className="w-full border-[1px] border-[#EBEBEB] rounded-[5px] px-[15px] py-[10px] text-[16px] text-[#252525] outline-none focus:outline-none focus:border-[#1aa683] placeholder:text-[#B5B7C0]"
           />
@@ -886,7 +921,9 @@ function StepApartmentDetails({
               type="text"
               value={microDistrict}
               onChange={() => {}}
-              onClick={() => setIsMicroDistrictDropdownOpen(!isMicroDistrictDropdownOpen)} // Show dropdown on focus
+              onClick={() =>
+                setIsMicroDistrictDropdownOpen(!isMicroDistrictDropdownOpen)
+              } // Show dropdown on focus
               placeholder="Выберите микрорайон"
               className="w-full border-[1px] border-[#EBEBEB] rounded-[5px] px-[15px] py-[10px] text-[16px] text-[#252525] outline-none focus:outline-none focus:border-[#1aa683] placeholder:text-[#B5B7C0]"
             />
