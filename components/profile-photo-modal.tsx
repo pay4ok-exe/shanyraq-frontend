@@ -109,7 +109,7 @@ export const ProfilePhotoModal = ({
 
       // Assuming the backend returns the URL directly
       const uploadedUrl: string = response.data.url || response.data; // Adjust based on actual response
-      console.log(uploadedUrl);
+      // console.log(uploadedUrl);
 
       // Update the form data with the uploaded photo URL
       setFormData((prev: any) => ({
