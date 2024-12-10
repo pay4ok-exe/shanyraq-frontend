@@ -299,7 +299,7 @@ const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
                 </div>
 
                 {/* Qualities */}
-                <div className="col-span-3 mt-8">
+                <div id="qualities" className="col-span-3 mt-8">
                   <h2 className="font-circular text-[24px] font-semibold">
                     Качества
                   </h2>
@@ -319,7 +319,7 @@ const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
             </div>
 
             {/* Pricing and Contact Info */}
-            <div id="qualities" className="col-span-2 h-full ">
+            <div className="col-span-2 h-full ">
               <div className="space-y-6 sticky top-6">
                 {/* Price Section */}
                 <div className="p-6  border rounded-lg space-y-6">
