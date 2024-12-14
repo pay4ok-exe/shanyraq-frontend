@@ -53,7 +53,7 @@ const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
   const handleTabClick = (tab: any) => {
     setActiveTab(tab); // Update the active tab
     if (!tab) return;
-    document.getElementById(tab).scrollIntoView({ behavior: "smooth" }); // Smooth scroll to section
+    document.getElementById(tab).scrollIntoView({ behavior: "smooth" });
   };
 
   // Функции для модального окна
@@ -470,6 +470,7 @@ const AnnouncementPage = ({ params }: AnnouncementPageProps) => {
                       </a>
                       <a
                         href={`https://wa.me/${announcement.phoneNumber}`}
+                        target="_blank"
                         className="flex items-center space-x-2 px-4 py-2 rounded-lg shadow-sm  text-[14px] font-semibold">
                         <Image.whatsappIcon />
                         <span>Написать</span>

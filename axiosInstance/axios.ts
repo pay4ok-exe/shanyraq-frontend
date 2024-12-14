@@ -8,7 +8,6 @@ const axiosInstance = axios.create({
   },
 });
 
-// Add token to request headers if available
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");

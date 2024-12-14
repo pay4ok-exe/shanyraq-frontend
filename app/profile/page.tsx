@@ -75,7 +75,7 @@ export default function ProfilesPage() {
     setValue(calculateProfileProgress(formData));
   }, [formData]);
 
-  const calculateProfileProgress = (profile) => {
+  const calculateProfileProgress = (profile: any) => {
     const weights = {
       firstName: 15,
       lastName: 15,
@@ -101,9 +101,6 @@ export default function ProfilesPage() {
   const openPhotoModal = () => setIsPhotoModalShow(true);
   const closePhotoModal = () => setIsPhotoModalShow(false);
 
-  const handlePasswordChange = (field, value) => {
-    setPasswordData((prev) => ({ ...prev, [field]: value }));
-  };
 
   const toggleVisibility = (field) => {
     setPasswordVisibility((prev) => ({

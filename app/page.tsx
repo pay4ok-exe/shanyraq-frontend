@@ -37,7 +37,7 @@ export default function Home() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const fetchAllAnnouncements = async (filters) => {
+  const fetchAllAnnouncements = async (filters: any) => {
     try {
       setLoading(true);
       // Determine the endpoint dynamically based on viewType
@@ -52,9 +52,9 @@ export default function Home() {
       // Update announcements state
       setAnnouncements(response.data || []);
       setErrorMessage(""); // Clear any previous error messages
-    } catch (error) {
+    } catch (error: any) {
       console.error(
-        "Error fetching announcements:",
+        "`Error fetching announcements`:",
         error.response?.data?.message || error.message
       );
 
@@ -146,6 +146,7 @@ export default function Home() {
       fetchData();
     }
   }, [query]);
+
 
   const toggleSortDropdown = () => {
     setIsSortDropdownOpen(!isSortDropdownOpen);
@@ -317,7 +318,7 @@ export default function Home() {
                       ))
                     : announcements &&
                       announcements.length > 0 &&
-                      announcements.map((announcement) => (
+                      announcements.map((announcement: any) => (
                         <HomeCard
                           key={announcement.announcementId}
                           card={announcement}
